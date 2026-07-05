@@ -11,8 +11,12 @@ export function createClient() {
   }
 
   return createBrowserClient(url, key, {
+    cookieOptions: {
+      name: "sb-esurat-auth-token",
+    },
     db: {
       schema: "kemenag_surat",
     },
   });
 }
+

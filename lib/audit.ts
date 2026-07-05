@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { auditLogs } from "@/lib/db/schema";
+import { sql } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export async function createAuditLog({
@@ -20,14 +20,18 @@ export async function createAuditLog({
     const rawIp = headerList.get("x-forwarded-for") || "";
     const ip = rawIp.split(",")[0]?.trim() || "unknown";
 
-    await db.insert(auditLogs).values({
-      adminId,
-      action,
-      entityType,
-      entityId,
-      details: details || {},
-      ipAddress: ip,
-    });
+    const target = `${entityType || "unknown"}:${entityId || "unknown"}`;
+
+    await db.execute(sql`
+      INSERT INTO kemenag_pusdatin.audit_logs (action, target, target_schema, performed_by, after_state, ip)
+      SELECT 
+        ${action}, 
+        ${target}, 
+        'e-surat-kemenag', 
+        COALESCE((SELECT email FROM kemenag_pusdatin.users WHERE id::varchar = ${adminId}), ${adminId}), 
+        ${JSON.stringify(details || {})}::jsonb, 
+        ${ip}
+    `);
   } catch (error) {
     console.error("Failed to create audit log:", error);
   }

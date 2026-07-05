@@ -2,7 +2,7 @@
 
 import { requireAuth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { pengguna } from "@/lib/db/schema";
+import { pusdatinUsers } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -13,10 +13,12 @@ export async function updateOwnProfileAction(nama: string) {
       return { success: false, error: "Nama tidak boleh kosong" };
     }
     
+    if (!user.email) throw new Error("Email tidak ditemukan");
+
     await db
-      .update(pengguna)
-      .set({ nama, updatedAt: sql`now()` })
-      .where(eq(pengguna.id, user.id));
+      .update(pusdatinUsers)
+      .set({ name: nama, updatedAt: sql`now()` })
+      .where(eq(pusdatinUsers.email, user.email));
     
     revalidatePath("/", "layout");
     return { success: true };

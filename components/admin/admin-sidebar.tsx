@@ -7,8 +7,6 @@ import {
   LayoutDashboard,
   Inbox,
   Send,
-  History,
-  Users,
   Settings2,
   type LucideIcon,
   ChevronRight,
@@ -37,13 +35,7 @@ const NAV_ITEMS: NavItem[] = [
     icon: Send,
     group: "Tata Naskah",
   },
-  {
-    label: "Pengguna",
-    href: "/pengguna",
-    icon: Users,
-    group: "Sistem",
-    superAdminOnly: true,
-  },
+
   {
     label: "Manajemen Surat",
     href: "/manajemen-surat",
@@ -51,7 +43,6 @@ const NAV_ITEMS: NavItem[] = [
     group: "Sistem",
     superAdminOnly: true,
   },
-  { label: "Log Audit", href: "/log-audit", icon: History, group: "Sistem" },
 ];
 
 const GROUP_ORDER = ["Utama", "Tata Naskah", "Sistem"];

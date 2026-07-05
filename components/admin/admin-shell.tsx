@@ -8,11 +8,15 @@ export function AdminShell({
   children,
   userEmail,
   userName,
+  userRole,
+  userAvatar,
   isSuperAdmin = false,
 }: {
   children: React.ReactNode;
   userEmail: string;
   userName?: string;
+  userRole?: string;
+  userAvatar?: string | null;
   isSuperAdmin?: boolean;
 }) {
   const [sidebarCollapsed] = useState(false);
@@ -49,6 +53,9 @@ export function AdminShell({
           onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
           userEmail={userEmail}
           userName={userName || userEmail}
+          userRole={userRole}
+          userAvatar={userAvatar}
+          isSuperAdmin={isSuperAdmin}
         />
         <main className="flex-1 overflow-y-auto p-4 lg:p-6 custom-scrollbar">
           {children}
