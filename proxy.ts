@@ -2,6 +2,13 @@ import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Allow health endpoint without maintenance check (required for Coolify)
+  if (pathname === "/api/health") {
+    return NextResponse.next();
+  }
+
   try {
     const pusdatinUrl = process.env.NEXT_PUBLIC_PUSDATIN_URL || "https://pusdatin.kemenag-baritoutara.go.id";
     const appId = 'e-surat-kemenag';
@@ -73,8 +80,6 @@ export async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const { pathname } = request.nextUrl;
 
   if (
     pathname === "/login" ||
