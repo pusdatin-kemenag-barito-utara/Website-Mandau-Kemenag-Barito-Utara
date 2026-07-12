@@ -23,7 +23,7 @@ export function AdminShell({
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 fixed inset-0 w-full">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-[#0f1117] fixed inset-0 w-full">
       {/* Desktop sidebar */}
       <div className="hidden lg:flex">
         <AdminSidebar collapsed={sidebarCollapsed} isSuperAdmin={isSuperAdmin} />
@@ -55,7 +55,7 @@ export function AdminShell({
           userName={userName || userEmail}
           userRole={userRole}
           userAvatar={userAvatar}
-          isSuperAdmin={isSuperAdmin}
+
         />
         <main className="flex-1 overflow-y-auto p-4 lg:p-6 custom-scrollbar">
           {children}

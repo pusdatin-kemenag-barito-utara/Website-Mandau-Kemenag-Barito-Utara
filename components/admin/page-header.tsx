@@ -15,7 +15,7 @@ export function PageHeader({
   externalLink?: string;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#064e3b] to-[#059669] px-4 sm:px-5 py-4 shadow-md shadow-emerald-900/20 relative group">
+    <div className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#064e3b] to-[#059669] dark:from-[#064e3b]/80 dark:to-[#059669]/60 dark:border dark:border-emerald-800/40 px-4 sm:px-5 py-4 shadow-md shadow-emerald-900/20 relative group">
       <div className="flex items-center gap-3 min-w-0">
         {Icon && (
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/15 border border-white/20 text-white shadow-md shadow-emerald-500/20">

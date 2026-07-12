@@ -5,7 +5,7 @@ import * as schema from "./schema";
 const isProd = process.env.NODE_ENV === "production";
 const createPool = () => new Pool({
   connectionString: process.env.DATABASE_URL,
-  max: isProd ? 15 : 3, // 15 di VPS/Production, 3 di Local Dev agar tidak bocor
+  max: isProd ? 15 : 10, // 15 di VPS/Production, 10 di Local Dev agar tidak bocor
   idleTimeoutMillis: isProd ? 30000 : 10000,
   connectionTimeoutMillis: 30000,
   allowExitOnIdle: !isProd,       // Dev: pool exit jika idle (cegah numpuk)

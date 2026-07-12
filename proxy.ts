@@ -9,45 +9,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  try {
-    const pusdatinUrl = process.env.NEXT_PUBLIC_PUSDATIN_URL || "https://pusdatin.kemenag-baritoutara.go.id";
-    const appId = 'e-surat-kemenag';
-    
-    const maintenanceRes = await fetch(`${pusdatinUrl}/api/public/apps/${appId}/status`, {
-      next: { revalidate: 30 }
-    });
-
-    if (maintenanceRes.ok) {
-      const data = await maintenanceRes.json();
-      if (data.status === 'maintenance') {
-        return new NextResponse(`
-          <!DOCTYPE html>
-          <html lang="id">
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>Sistem Sedang Pemeliharaan</title>
-              <link rel="icon" href="${pusdatinUrl}/branding/kemenag.svg" type="image/svg+xml">
-              <style>
-                body { margin: 0; overflow: hidden; background-color: #f8fafc; }
-                iframe { width: 100vw; height: 100vh; border: none; }
-              </style>
-            </head>
-            <body>
-              <iframe src="${pusdatinUrl}/maintenance?app=Si+Mandau" title="Maintenance"></iframe>
-            </body>
-          </html>
-        `, {
-          status: 503,
-          headers: {
-            'Content-Type': 'text/html; charset=utf-8',
-          },
-        });
-      }
-    }
-  } catch (error) {
-    console.error("[PROXY] Failed to fetch maintenance status:", error);
-  }
+  // Maintenance check removed to prevent middleware bottleneck
 
   let supabaseResponse = NextResponse.next({ request });
 
@@ -79,8 +41,10 @@ export async function proxy(request: NextRequest) {
   );
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
+  
+  const user = session?.user;
 
   if (
     pathname === "/login" ||

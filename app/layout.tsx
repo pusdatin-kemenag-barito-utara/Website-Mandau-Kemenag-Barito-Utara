@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { FramerProvider } from "@/components/providers/framer-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { MaintenanceBlocker } from "@/components/providers/maintenance-blocker";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -77,6 +78,7 @@ export default function RootLayout({
         >
           <FramerProvider>{children}</FramerProvider>
           <Toaster position="top-right" richColors closeButton />
+          <MaintenanceBlocker />
         </ThemeProvider>
       </body>
     </html>

@@ -14,8 +14,7 @@
 @custom-variant dark (&:is(.dark *));
 
 body {
-  background: #f8fafc;
-  color: var(--foreground);
+  @apply text-slate-900 dark:text-slate-100;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

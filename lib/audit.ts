@@ -27,8 +27,8 @@ export async function createAuditLog({
       SELECT 
         ${action}, 
         ${target}, 
-        'e-surat-kemenag', 
-        COALESCE((SELECT email FROM kemenag_pusdatin.users WHERE id::varchar = ${adminId}), ${adminId}), 
+        'kemenag_surat', 
+        COALESCE((SELECT email FROM kemenag_pusdatin.profiles WHERE id::varchar = ${adminId}), ${adminId}), 
         ${JSON.stringify(details || {})}::jsonb, 
         ${ip}
     `);

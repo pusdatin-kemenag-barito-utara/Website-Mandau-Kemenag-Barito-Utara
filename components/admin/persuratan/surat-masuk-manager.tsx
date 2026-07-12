@@ -10,10 +10,13 @@ import {
   X,
   Loader2,
   Eye,
-  Download,
   Upload,
   FileText,
+  FileSpreadsheet,
 } from "lucide-react";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import {
   getSuratMasukAction,
   saveSuratMasukAction,
@@ -247,9 +250,9 @@ export function SuratMasukManager({
     }
   };
 
-  const exportCSV = () => {
+  const exportExcel = () => {
     const headers = [
-      "ID",
+      "No",
       "Nomor Surat",
       "Tanggal Surat",
       "Tanggal Terima",
@@ -257,8 +260,34 @@ export function SuratMasukManager({
       "Perihal",
       "Status",
     ];
-    const rows = filtered.map((item) => [
-      item.id,
+    const data = filtered.map((item, index) => ({
+      No: index + 1,
+      "Nomor Surat": item.nomor_surat,
+      "Tanggal Surat": item.tanggal_surat,
+      "Tanggal Terima": item.tanggal_terima,
+      "Asal Surat": item.asal_surat,
+      Perihal: item.perihal,
+      Status: item.status || "",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Surat Masuk");
+    XLSX.writeFile(workbook, `Buku_Agenda_Surat_Masuk_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  };
+
+  const exportPDF = () => {
+    const doc = new jsPDF("landscape");
+    doc.text("Buku Agenda Surat Masuk", 14, 15);
+    doc.setFontSize(10);
+    doc.text(`Kemenag Kabupaten Barito Utara - Dicetak: ${new Date().toLocaleDateString("id-ID")}`, 14, 22);
+
+    const headers = [
+      ["No", "Nomor Surat", "Tgl Surat", "Tgl Terima", "Asal Surat", "Perihal", "Status"],
+    ];
+
+    const data = filtered.map((item, index) => [
+      index + 1,
       item.nomor_surat,
       item.tanggal_surat,
       item.tanggal_terima,
@@ -267,20 +296,15 @@ export function SuratMasukManager({
       item.status || "",
     ]);
 
-    const csv = [
-      "\uFEFF" + headers.join(","),
-      ...rows.map((r) =>
-        r.map((c) => `"${(c || "").replace(/"/g, '""')}"`).join(","),
-      ),
-    ].join("\n");
+    autoTable(doc, {
+      head: headers,
+      body: data,
+      startY: 30,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [6, 78, 59] }, // emerald-900
+    });
 
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `surat-masuk-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    doc.save(`Buku_Agenda_Surat_Masuk_${new Date().toISOString().slice(0, 10)}.pdf`);
   };
 
   const formatDate = (dateStr: string) => {
@@ -315,9 +339,13 @@ export function SuratMasukManager({
             <Filter className="h-4 w-4" />
             Filter
           </Button>
-          <Button variant="outline" size="sm" onClick={exportCSV}>
-            <Download className="h-4 w-4" />
-            CSV
+          <Button variant="outline" size="sm" onClick={exportExcel}>
+            <FileSpreadsheet className="h-4 w-4" />
+            Excel
+          </Button>
+          <Button variant="outline" size="sm" onClick={exportPDF}>
+            <FileText className="h-4 w-4" />
+            PDF
           </Button>
           <Button size="sm" onClick={openCreate}>
             <Plus className="h-4 w-4" />

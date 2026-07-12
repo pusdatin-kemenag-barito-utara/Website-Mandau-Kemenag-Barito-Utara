@@ -2,7 +2,7 @@
 
 import { requireAuth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { pusdatinUsers } from "@/lib/db/schema";
+import { pusdatinProfiles } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -16,9 +16,9 @@ export async function updateOwnProfileAction(nama: string) {
     if (!user.email) throw new Error("Email tidak ditemukan");
 
     await db
-      .update(pusdatinUsers)
+      .update(pusdatinProfiles)
       .set({ name: nama, updatedAt: sql`now()` })
-      .where(eq(pusdatinUsers.email, user.email));
+      .where(eq(pusdatinProfiles.email, user.email));
     
     revalidatePath("/", "layout");
     return { success: true };

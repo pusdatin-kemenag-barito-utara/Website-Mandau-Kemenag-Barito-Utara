@@ -35,7 +35,7 @@ export default async function AdminLayout({
       app_role: string | null;
     }>(sql`
       SELECT u.name, u.role, u.avatar, p.role as app_role
-      FROM kemenag_pusdatin.users u
+      FROM kemenag_pusdatin.profiles u
       LEFT JOIN kemenag_pusdatin.app_permissions p 
         ON p.user_id = u.id AND p.app_id = 'e-surat-kemenag'
       WHERE u.email = ${user.email}
