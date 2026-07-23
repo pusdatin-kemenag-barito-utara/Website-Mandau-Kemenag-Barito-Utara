@@ -12,8 +12,7 @@ export const metadata = {
 };
 
 export default async function SuratMasukPage() {
-  const result = await getSuratMasukAction(1, 5000);
-
+  const result = await getSuratMasukAction(1, 1000);
 
   return (
     <div className="space-y-6">
@@ -26,7 +25,6 @@ export default async function SuratMasukPage() {
       <SuratMasukManager
         initialData={result.success ? (result.data as SuratMasuk[]) : []}
         initialTotal={result.success ? result.total || 0 : 0}
-
       />
     </div>
   );

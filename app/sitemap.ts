@@ -1,17 +1,20 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = "https://surat.kemenag-baritoutara.com";
+  const lastMod = new Date();
+
   return [
     {
-      url: 'https://surat.kemenag-baritoutara.com',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 1,
+      url: baseUrl,
+      lastModified: lastMod,
+      changeFrequency: "daily",
+      priority: 1.0,
     },
     {
-      url: 'https://surat.kemenag-baritoutara.com/login',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
+      url: `${baseUrl}/login`,
+      lastModified: lastMod,
+      changeFrequency: "weekly",
       priority: 0.8,
     },
   ];

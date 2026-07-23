@@ -19,14 +19,18 @@ export function AdminShell({
   userAvatar?: string | null;
   isSuperAdmin?: boolean;
 }) {
-  const [sidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-[#0f1117] fixed inset-0 w-full">
       {/* Desktop sidebar */}
       <div className="hidden lg:flex">
-        <AdminSidebar collapsed={sidebarCollapsed} isSuperAdmin={isSuperAdmin} />
+        <AdminSidebar
+          collapsed={sidebarCollapsed}
+          isSuperAdmin={isSuperAdmin}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
       </div>
 
       {/* Mobile sidebar overlay */}
@@ -55,7 +59,6 @@ export function AdminShell({
           userName={userName || userEmail}
           userRole={userRole}
           userAvatar={userAvatar}
-
         />
         <main className="flex-1 overflow-y-auto p-4 lg:p-6 custom-scrollbar">
           {children}

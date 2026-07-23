@@ -5,7 +5,6 @@ import {
   SuratKeluarManager,
   type SuratKeluar,
 } from "@/components/admin/persuratan/surat-keluar-manager";
-import { BADGE_COLOR_MAP } from "@/lib/constants";
 import { Send } from "lucide-react";
 
 export const metadata = {
@@ -13,8 +12,8 @@ export const metadata = {
 };
 
 export default async function SuratKeluarPage() {
-  const result = await getSuratKeluarAction(1, 5000);
-  const [agendaRes, unitKerjaRes] = await Promise.all([
+  const [result, agendaRes, unitKerjaRes] = await Promise.all([
+    getSuratKeluarAction(1, 1000),
     getMasterOptionsAction("agenda"),
     getMasterOptionsAction("unit_kerja"),
   ]);

@@ -699,6 +699,7 @@ export async function deleteSuratKeluarAction(
 
     after(() => {
       revalidatePath("/surat-keluar");
+      revalidatePath("/");
     });
     return { success: true, message: "Surat keluar berhasil dihapus" };
   } catch (error: unknown) {
@@ -708,6 +709,102 @@ export async function deleteSuratKeluarAction(
         error instanceof Error
           ? error.message
           : "Gagal menghapus data surat keluar",
+    };
+  }
+}
+
+export async function archiveSuratMasukAction(
+  id: string,
+  archive: boolean = true,
+): Promise<ActionResult> {
+  const user = await requireAuth();
+  try {
+    if (!id) return { success: false, error: "ID tidak valid" };
+
+    const newStatus = archive ? "archived" : "published";
+
+    await db
+      .update(suratMasuk)
+      .set({
+        status: newStatus,
+        updatedBy: user.id,
+        updatedAt: sql`now()`,
+      })
+      .where(and(eq(suratMasuk.externalId, id), isNull(suratMasuk.deletedAt)));
+
+    await createAuditLog({
+      adminId: user.id,
+      action: archive ? "ARSIP_SURAT_MASUK" : "PULIHKAN_SURAT_MASUK",
+      entityType: "surat_masuk",
+      entityId: id,
+    });
+
+    after(() => {
+      revalidatePath("/surat-masuk");
+      revalidatePath("/");
+    });
+
+    return {
+      success: true,
+      message: archive
+        ? "Surat masuk berhasil diarsipkan"
+        : "Surat masuk berhasil dipulihkan dari arsip",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Gagal mengarsipkan surat masuk",
+    };
+  }
+}
+
+export async function archiveSuratKeluarAction(
+  id: string,
+  archive: boolean = true,
+): Promise<ActionResult> {
+  const user = await requireAuth();
+  try {
+    if (!id) return { success: false, error: "ID tidak valid" };
+
+    const newStatus = archive ? "archived" : "published";
+
+    await db
+      .update(suratKeluar)
+      .set({
+        status: newStatus,
+        updatedBy: user.id,
+        updatedAt: sql`now()`,
+      })
+      .where(and(eq(suratKeluar.externalId, id), isNull(suratKeluar.deletedAt)));
+
+    await createAuditLog({
+      adminId: user.id,
+      action: archive ? "ARSIP_SURAT_KELUAR" : "PULIHKAN_SURAT_KELUAR",
+      entityType: "surat_keluar",
+      entityId: id,
+    });
+
+    after(() => {
+      revalidatePath("/surat-keluar");
+      revalidatePath("/");
+    });
+
+    return {
+      success: true,
+      message: archive
+        ? "Surat keluar berhasil diarsipkan"
+        : "Surat keluar berhasil dipulihkan dari arsip",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Gagal mengarsipkan surat keluar",
     };
   }
 }

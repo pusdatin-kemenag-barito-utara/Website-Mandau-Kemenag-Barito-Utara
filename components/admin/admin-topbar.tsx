@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Menu, ChevronDown, LogOut, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { m, AnimatePresence } from "framer-motion";
-
+import { Menu, ChevronDown, LogOut, ShieldCheck } from "lucide-react";
 
 export function AdminTopbar({
   onToggleSidebar,
@@ -14,14 +13,12 @@ export function AdminTopbar({
   userName,
   userRole,
   userAvatar,
-
 }: {
   onToggleSidebar: () => void;
   userEmail: string;
   userName: string;
   userRole?: string;
   userAvatar?: string | null;
-
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -45,17 +42,22 @@ export function AdminTopbar({
   return (
     <>
       <header className="h-16 bg-white dark:bg-[#0f1117] border-b border-slate-200/80 dark:border-white/5 flex items-center justify-between px-4 lg:px-6 shrink-0 transition-colors duration-300">
-        <button
-          onClick={onToggleSidebar}
-          className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400 transition-all lg:hidden"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Mobile hamburger menu */}
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400 transition-all lg:hidden"
+            title="Buka Menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
 
-        {/* Breadcrumb area */}
-        <div className="hidden lg:flex items-center gap-2 text-xs font-medium text-slate-400 dark:text-slate-500">
-          <ShieldCheck className="h-4 w-4 text-emerald-500" />
-          <span className="text-slate-600 dark:text-slate-300">Panel Admin</span>
+          {/* Breadcrumb area */}
+          <div className="hidden lg:flex items-center gap-2 text-xs font-medium text-slate-400 dark:text-slate-500">
+            <ShieldCheck className="h-4 w-4 text-emerald-500" />
+            <span className="text-slate-600 dark:text-slate-300">Panel Admin</span>
+          </div>
         </div>
 
         {/* Right side actions */}

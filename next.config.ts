@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "50mb",
     },
+    optimizePackageImports: ["lucide-react", "framer-motion", "clsx", "sonner"],
   },
   async headers() {
     return [

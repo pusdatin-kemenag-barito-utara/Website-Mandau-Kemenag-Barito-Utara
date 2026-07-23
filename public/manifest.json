@@ -1,0 +1,40 @@
+{
+  "name": "SI MANDAU - E-Surat Kemenag Barito Utara",
+  "short_name": "SI MANDAU",
+  "description": "Portal Resmi Sistem Informasi Manajemen Persuratan Elektronik Kementerian Agama Kabupaten Barito Utara",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#064e3b",
+  "theme_color": "#064e3b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/mandau.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/mandau.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Surat Masuk",
+      "short_name": "Surat Masuk",
+      "description": "Buka daftar agenda Surat Masuk",
+      "url": "/surat-masuk",
+      "icons": [{ "src": "/mandau.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Surat Keluar",
+      "short_name": "Surat Keluar",
+      "description": "Buka daftar agenda Surat Keluar",
+      "url": "/surat-keluar",
+      "icons": [{ "src": "/mandau.png", "sizes": "192x192" }]
+    }
+  ]
+}

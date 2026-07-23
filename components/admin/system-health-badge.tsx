@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 
-export function SystemHealthBadge() {
+export function SystemHealthBadge({ collapsed = false }: { collapsed?: boolean }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
@@ -11,13 +11,18 @@ export function SystemHealthBadge() {
       <button
         type="button"
         onClick={() => setShowTooltip(!showTooltip)}
-        className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-lg hover:bg-white/5 transition-colors"
+        className={`flex items-center gap-2.5 w-full py-1.5 rounded-lg hover:bg-white/5 transition-colors ${
+          collapsed ? "justify-center px-0" : "px-2"
+        }`}
+        title={collapsed ? "Sistem Online" : undefined}
       >
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
         </span>
-        <span className="text-[11px] font-bold text-white/50">Sistem Online</span>
+        {!collapsed && (
+          <span className="text-[11px] font-bold text-white/50">Sistem Online</span>
+        )}
       </button>
 
       <AnimatePresence>

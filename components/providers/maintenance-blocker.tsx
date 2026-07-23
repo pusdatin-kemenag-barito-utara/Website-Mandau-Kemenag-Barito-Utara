@@ -17,13 +17,16 @@ export function MaintenanceBlocker() {
           { cache: "no-store" }
         );
         if (res.ok) {
-          const data = await res.json();
-          if (data.status === "maintenance") {
-            setIsMaintenance(true);
-            document.body.style.overflow = "hidden"; // Prevent scrolling behind iframe
-          } else {
-            setIsMaintenance(false);
-            document.body.style.overflow = "";
+          const contentType = res.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const data = await res.json();
+            if (data.status === "maintenance") {
+              setIsMaintenance(true);
+              document.body.style.overflow = "hidden"; // Prevent scrolling behind iframe
+            } else {
+              setIsMaintenance(false);
+              document.body.style.overflow = "";
+            }
           }
         }
       } catch (err) {

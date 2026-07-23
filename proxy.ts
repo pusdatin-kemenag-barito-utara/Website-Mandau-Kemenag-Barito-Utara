@@ -49,9 +49,14 @@ export async function proxy(request: NextRequest) {
   if (
     pathname === "/login" ||
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/public") ||
     pathname === "/api/health" ||
     pathname === "/sitemap.xml" ||
-    pathname === "/robots.txt"
+    pathname === "/robots.txt" ||
+    pathname === "/manifest.json" ||
+    pathname === "/sw.js" ||
+    pathname === "/mandau.png" ||
+    pathname === "/kemenag.svg"
   ) {
     if (user && pathname === "/login") {
       return NextResponse.redirect(new URL("/", request.url));
