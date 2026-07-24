@@ -1,9 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 export function MaintenanceBlocker() {
-  const [isMaintenance, setIsMaintenance] = useState(false);
+  const [isMaintenance, setIsMaintenance] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("sys_maintenance") === "true";
+    }
+    return false;
+  });
+  const pathname = usePathname();
+  const router = useRouter();
   const pusdatinUrl =
     process.env.NEXT_PUBLIC_PUSDATIN_URL || "https://pusdatin.kemenag-baritoutara.com";
   const appId = "e-surat-kemenag";
@@ -22,10 +30,21 @@ export function MaintenanceBlocker() {
             const data = await res.json();
             if (data.status === "maintenance") {
               setIsMaintenance(true);
-              document.body.style.overflow = "hidden"; // Prevent scrolling behind iframe
+              sessionStorage.setItem("sys_maintenance", "true");
+              document.cookie = "sys_maintenance=true; path=/; max-age=60";
+              document.body.style.overflow = "hidden";
+              document.title = "Sistem Sedang Pemeliharaan";
+              if (pathname !== "/maintenance") {
+                router.replace("/maintenance");
+              }
             } else {
               setIsMaintenance(false);
+              sessionStorage.removeItem("sys_maintenance");
+              document.cookie = "sys_maintenance=; path=/; max-age=0";
               document.body.style.overflow = "";
+              if (pathname === "/maintenance") {
+                router.replace("/");
+              }
             }
           }
         }
@@ -33,7 +52,7 @@ export function MaintenanceBlocker() {
         // Use console.warn instead of console.error to prevent Next.js Dev Overlay from popping up
         console.warn(
           "Failed to check maintenance status (could be offline or CORS)",
-          err,
+          err
         );
       }
     };
@@ -47,16 +66,18 @@ export function MaintenanceBlocker() {
       clearInterval(interval);
       document.body.style.overflow = "";
     };
-  }, [pusdatinUrl]);
+  }, [pathname, pusdatinUrl, router]);
 
-  if (!isMaintenance) return null;
+  // If on /maintenance page, the page itself renders the iframe.
+  // Otherwise, render full screen overlay immediately when maintenance is true to prevent content flash while route is replacing.
+  if (!isMaintenance || pathname === "/maintenance") return null;
 
   return (
     <div className="fixed inset-0 z-[99999] bg-[#f8fafc]">
       <iframe
         src={`${pusdatinUrl}/maintenance?app=Si+Mandau`}
         className="w-full h-full border-none"
-        title="Maintenance"
+        title="Sistem Sedang Pemeliharaan"
       />
     </div>
   );

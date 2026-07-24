@@ -106,6 +106,7 @@ export default function LoginPage() {
               src="/mandau.png"
               alt="Logo SI MANDAU"
               fill
+              sizes="(max-width: 640px) 80px, 96px"
               className="object-contain"
               priority
             />

@@ -109,6 +109,7 @@ export function AdminSidebar({
               src="/mandau.png"
               alt="Logo SI MANDAU"
               fill
+              sizes="32px"
               className="object-contain"
               priority
             />

@@ -9,7 +9,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Maintenance check removed to prevent middleware bottleneck
+  // Fast server-side check for active maintenance cookie set by client
+  const isMaintenanceCookie = request.cookies.get("sys_maintenance")?.value === "true";
+  if (isMaintenanceCookie && pathname !== "/maintenance" && !pathname.startsWith("/api/")) {
+    return NextResponse.redirect(new URL("/maintenance", request.url));
+  }
 
   let supabaseResponse = NextResponse.next({ request });
 
@@ -48,6 +52,7 @@ export async function proxy(request: NextRequest) {
 
   if (
     pathname === "/login" ||
+    pathname === "/maintenance" ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/public") ||
     pathname === "/api/health" ||
