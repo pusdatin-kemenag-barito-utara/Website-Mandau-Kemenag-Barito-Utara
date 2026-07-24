@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 export function MaintenanceBlocker() {
   const [isMaintenance, setIsMaintenance] = useState(false);
   const pusdatinUrl =
-    process.env.NEXT_PUBLIC_PUSDATIN_URL || "http://localhost:3000";
+    process.env.NEXT_PUBLIC_PUSDATIN_URL || "https://pusdatin.kemenag-baritoutara.com";
   const appId = "e-surat-kemenag";
 
   useEffect(() => {
