@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"cd backend && go run main.go\" \"cd frontend && npm run dev\"",
+    "dev": "concurrently \"cd backend && go run main.go\" \"cd frontend && npm run dev -- -H 0.0.0.0 -p 3000\"",
     "dev:backend": "cd backend && go run main.go",
-    "dev:frontend": "cd frontend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev -- -H 0.0.0.0 -p 3000",
     "build:frontend": "cd frontend && npm run build",
     "build:backend": "cd backend && go build -o api-mandau main.go"
   },
