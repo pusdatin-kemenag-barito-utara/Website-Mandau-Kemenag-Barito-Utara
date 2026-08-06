@@ -19,7 +19,7 @@ RUN npm run build
 FROM node:22-alpine AS runner
 WORKDIR /app
 
-RUN apk add --no-cache ca-certificates tzdata bash
+RUN apk add --no-cache ca-certificates tzdata bash curl
 
 COPY --from=backend-builder /app/backend/api-mandau /app/api-mandau
 COPY --from=frontend-builder /app/frontend/public /app/frontend/public
