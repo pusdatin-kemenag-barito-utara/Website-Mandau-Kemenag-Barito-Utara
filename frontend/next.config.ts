@@ -7,6 +7,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  turbopack: {},
   serverExternalPackages: [
     "pg",
     "@aws-sdk/client-s3",
