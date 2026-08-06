@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "postinstall": "cd frontend && npm install",
     "dev": "concurrently \"cd backend && go run main.go\" \"cd frontend && npm run dev -- -H 0.0.0.0 -p 3000\"",
     "dev:backend": "cd backend && go run main.go",
     "dev:frontend": "cd frontend && npm run dev -- -H 0.0.0.0 -p 3000",
