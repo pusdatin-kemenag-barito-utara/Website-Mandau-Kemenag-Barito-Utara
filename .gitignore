@@ -1,8 +1,12 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ==========================================
+# SI MANDAU Monorepo - Git Ignore Rules
+# ==========================================
 
-# dependencies
-/node_modules
-/.pnp
+# ── Dependencies ──
+node_modules/
+frontend/node_modules/
+backend/vendor/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,51 +14,86 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing & reports
-/coverage
-test-results/
-playwright-report/
-
-# next.js & build
-/.next/
-/out/
-/build
+# ── Next.js & Frontend Build Outputs ──
+.next/
+frontend/.next/
+out/
+frontend/out/
+build/
+frontend/build/
 dist/
+frontend/dist/
 .cache/
 .turbo/
 
-# misc & OS
-.DS_Store
-Thumbs.db
-*.pem
+# ── Golang & Backend Binaries ──
+backend/api-mandau
+backend/api-mandau.exe
+backend/bin/
+backend/*.exe
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
 
-# debug
+# ── Environment Variables & Secrets ──
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+*.pem
+*.key
+*.crt
+
+# ── Logs & Debugging ──
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-.env.local
-.env*.local
+# ── Testing & Coverage Reports ──
+coverage/
+frontend/coverage/
+test-results/
+playwright-report/
 
-# vercel
-.vercel
-
-# typescript
+# ── TypeScript & Build Cache ──
 *.tsbuildinfo
+frontend/*.tsbuildinfo
 next-env.d.ts
+frontend/next-env.d.ts
 
-# IDE & Editor settings
-.vscode/
+# ── System & OS Files ──
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ── IDE & Editor Settings ──
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# AI Assistants & Temporary / Scratchpad scripts
+# ── Temporary & Scratch Files ──
 .claude/
 .opencode/
 .antigravitycli/
 .gemini/
 scratch/
-scripts/
-
+tmp/

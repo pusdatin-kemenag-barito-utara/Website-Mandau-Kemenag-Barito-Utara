@@ -27,3 +27,4 @@
 1. Never execute terminal commands yourself — always ask the user
 2. For Supabase Storage operations, use `createAdminClient()` (service_role)
 3. `sonner` for toasts, `lucide-react` for icons, `framer-motion` for animations
+4. Jangan pernah menjalankan perintah `npm run typecheck` atau perintah pengecekan secara otomatis/mandiri — selalu tunggu arahan dan instruksi langsung dari user.
