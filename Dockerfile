@@ -7,8 +7,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o api-mandau main.go
 
 FROM node:22-alpine AS frontend-builder
 WORKDIR /app
-COPY package.json package-lock.json ./
-COPY frontend/package.json frontend/package-lock.json ./frontend/
+COPY package.json package-lock.json* ./
+COPY frontend/package.json frontend/package-lock.json* ./frontend/
 RUN npm install
 COPY frontend/ ./frontend/
 COPY .env* ./
