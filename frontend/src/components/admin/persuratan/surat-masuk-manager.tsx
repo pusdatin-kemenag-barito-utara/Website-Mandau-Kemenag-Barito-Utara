@@ -819,7 +819,7 @@ export function SuratMasukManager({
       {!loading && !fetchError && (
         <div ref={tableRef} className="bg-white dark:bg-[#1a1d24] border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-sm overflow-hidden scroll-mt-20">
           <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full min-w-[850px] text-sm border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 dark:border-white/5 bg-slate-100/60 dark:bg-white/[0.03]">
                   <th className="text-center px-4 py-3.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest w-12">
