@@ -18,7 +18,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o
 FROM node:22-alpine AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci
+RUN npm install --no-audit --prefer-offline || npm install --no-audit
 COPY frontend/ ./
 ENV ASTRO_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
@@ -44,8 +44,8 @@ COPY --from=backend-builder /app/api-mandau /app/api-mandau
 
 # Copy and install production frontend dependencies
 COPY --from=frontend-builder /app/frontend/package.json /app/package.json
-COPY --from=frontend-builder /app/frontend/package-lock.json /app/package-lock.json
-RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=frontend-builder /app/frontend/package-lock.json* /app/package-lock.json
+RUN npm install --omit=dev --no-audit && npm cache clean --force
 
 # Copy pre-rendered Astro production build
 COPY --from=frontend-builder /app/frontend/dist /app/dist
