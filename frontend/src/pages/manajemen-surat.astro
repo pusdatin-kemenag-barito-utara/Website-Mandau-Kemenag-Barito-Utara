@@ -1,0 +1,20 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { PageHeader } from "@/components/admin/page-header";
+import { Settings2 } from "lucide-react";
+import { ManajemenSuratManager } from "@/components/admin/manajemen-surat/manajemen-surat-manager";
+---
+
+<AdminLayout
+  title="Manajemen Opsi Surat | SI MANDAU Kemenag Barito Utara"
+  description="Konfigurasi opsi pilihan agenda naskah dan unit kerja persuratan Kantor Kementerian Agama Kabupaten Barito Utara."
+>
+  <div class="space-y-4">
+    <PageHeader
+      title="Manajemen Surat"
+      description="Kelola opsi pilihan pada form surat masuk dan surat keluar"
+      icon={Settings2}
+    />
+    <ManajemenSuratManager client:load />
+  </div>
+</AdminLayout>

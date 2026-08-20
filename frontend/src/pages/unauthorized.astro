@@ -1,0 +1,11 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import { UnauthorizedPage } from "@/components/auth/unauthorized-page";
+---
+
+<RootLayout
+  title="Akses Ditolak | SI MANDAU Kemenag Barito Utara"
+  description="Anda tidak memiliki izin akses untuk membuka halaman ini pada portal SI MANDAU."
+>
+  <UnauthorizedPage client:load />
+</RootLayout>

@@ -1,0 +1,35 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createApiClient } from "@/lib/api-client";
+import {
+  DashboardInteractiveContent,
+  type SuratMasukItem,
+  type SuratKeluarItem,
+} from "@/components/admin/dashboard-interactive-content";
+
+const api = createApiClient(Astro.locals.authToken);
+const res = await api.dashboard.getStats();
+const stats = res.data || {
+  totalSuratMasuk: 0,
+  totalSuratKeluar: 0,
+  suratMasukBulanIni: 0,
+  suratKeluarBulanIni: 0,
+  recentSuratMasuk: [],
+  recentSuratKeluar: [],
+};
+---
+
+<AdminLayout
+  title="Dashboard Persuratan | SI MANDAU Kemenag Barito Utara"
+  description="Pantau dan kelola ringkasan statistik naskah dinas masuk dan keluar secara real-time pada portal SI MANDAU Kantor Kementerian Agama Kabupaten Barito Utara."
+>
+  <DashboardInteractiveContent
+    client:load
+    suratMasukTotal={stats.totalSuratMasuk || 0}
+    suratKeluarTotal={stats.totalSuratKeluar || 0}
+    suratMasukBulanIni={stats.suratMasukBulanIni || 0}
+    suratKeluarBulanIni={stats.suratKeluarBulanIni || 0}
+    recentSuratMasuk={(stats.recentSuratMasuk as unknown as SuratMasukItem[]) || []}
+    recentSuratKeluar={(stats.recentSuratKeluar as unknown as SuratKeluarItem[]) || []}
+  />
+</AdminLayout>

@@ -1,0 +1,15 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import { LoginPage } from "@/components/auth/login-page";
+
+if (Astro.locals.user) {
+  return Astro.redirect("/");
+}
+---
+
+<RootLayout
+  title="Masuk ke Panel Admin | SI MANDAU Kemenag Barito Utara"
+  description="Masuk ke portal Sistem Informasi Manajemen Persuratan Elektronik (SI MANDAU) Kantor Kementerian Agama Kabupaten Barito Utara."
+>
+  <LoginPage client:load />
+</RootLayout>

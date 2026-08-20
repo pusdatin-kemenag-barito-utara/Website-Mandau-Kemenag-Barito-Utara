@@ -1,0 +1,32 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createApiClient } from "@/lib/api-client";
+import { PageHeader } from "@/components/admin/page-header";
+import {
+  SuratMasukManager,
+  type SuratMasuk,
+} from "@/components/admin/persuratan/surat-masuk-manager";
+import { Inbox } from "lucide-react";
+
+const api = createApiClient(Astro.locals.authToken);
+const result = await api.suratMasuk.list(1, 5000);
+---
+
+<AdminLayout
+  title="Agenda Surat Masuk | SI MANDAU Kemenag Barito Utara"
+  description="Kelola, catat, dan arsipkan naskah dinas masuk Kantor Kementerian Agama Kabupaten Barito Utara."
+>
+  <div class="space-y-6">
+    <PageHeader
+      title="Surat Masuk"
+      description="Kelola dan catat naskah dinas masuk Kantor Kementerian Agama Kabupaten Barito Utara"
+      icon={Inbox}
+    />
+
+    <SuratMasukManager
+      client:load
+      initialData={(result.data as SuratMasuk[]) || []}
+      initialTotal={result.total || 0}
+    />
+  </div>
+</AdminLayout>

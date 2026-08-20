@@ -1,40 +1,84 @@
 {
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "https://surat.kemenag-baritoutara.com/",
   "name": "SI MANDAU - E-Surat Kemenag Barito Utara",
   "short_name": "SI MANDAU",
   "description": "Portal Resmi Sistem Informasi Manajemen Persuratan Elektronik Kementerian Agama Kabupaten Barito Utara",
+  "lang": "id",
+  "dir": "ltr",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "any",
   "background_color": "#064e3b",
   "theme_color": "#064e3b",
-  "orientation": "portrait-primary",
+  "categories": [
+    "government",
+    "productivity",
+    "business",
+    "utilities"
+  ],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/mandau.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/mandau.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/mandau.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/mandau.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
     {
-      "name": "Surat Masuk",
-      "short_name": "Surat Masuk",
-      "description": "Buka daftar agenda Surat Masuk",
-      "url": "/surat-masuk",
-      "icons": [{ "src": "/mandau.png", "sizes": "192x192" }]
+      "name": "Dashboard Utama",
+      "short_name": "Dashboard",
+      "description": "Buka ringkasan persuratan dan statistik naskah",
+      "url": "/",
+      "icons": [{ "src": "/mandau.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
-      "name": "Surat Keluar",
+      "name": "Catat Surat Masuk",
+      "short_name": "Surat Masuk",
+      "description": "Kelola dan catat naskah dinas masuk",
+      "url": "/surat-masuk",
+      "icons": [{ "src": "/mandau.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Registrasi Surat Keluar",
       "short_name": "Surat Keluar",
-      "description": "Buka daftar agenda Surat Keluar",
+      "description": "Kelola dan registrasi naskah dinas keluar",
       "url": "/surat-keluar",
-      "icons": [{ "src": "/mandau.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/mandau.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Manajemen Surat",
+      "short_name": "Manajemen",
+      "description": "Pengaturan opsi dan klasifikasi naskah",
+      "url": "/manajemen-surat",
+      "icons": [{ "src": "/mandau.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }

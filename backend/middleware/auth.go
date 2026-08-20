@@ -4,6 +4,8 @@ import (
 	"os"
 	"strings"
 
+	"e-surat-backend/models"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -29,9 +31,9 @@ func AuthRequired(c *fiber.Ctx) error {
 	}
 
 	if tokenString == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"success": false,
-			"error":   "Sesi login tidak valid atau telah berakhir.",
+		return c.Status(fiber.StatusUnauthorized).JSON(models.APIResponse{
+			Success: false,
+			Error:   "Sesi login tidak valid atau telah berakhir.",
 		})
 	}
 
@@ -43,17 +45,17 @@ func AuthRequired(c *fiber.Ctx) error {
 	})
 
 	if err != nil || !token.Valid {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"success": false,
-			"error":   "Sesi autentikasi telah kadaluarsa. Silakan login kembali.",
+		return c.Status(fiber.StatusUnauthorized).JSON(models.APIResponse{
+			Success: false,
+			Error:   "Sesi autentikasi telah kadaluarsa. Silakan login kembali.",
 		})
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"success": false,
-			"error":   "Token klaim tidak valid.",
+		return c.Status(fiber.StatusUnauthorized).JSON(models.APIResponse{
+			Success: false,
+			Error:   "Token klaim tidak valid.",
 		})
 	}
 

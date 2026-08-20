@@ -1,16 +1,9 @@
 package config
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io"
-	"mime/multipart"
 	"os"
-	"path/filepath"
-	"regexp"
-	"strings"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
@@ -55,93 +48,4 @@ func InitStorage() {
 
 	S3Client = s3.NewFromConfig(cfg)
 	fmt.Println("✅ Successfully initialized Cloudflare R2 Storage Client!")
-}
-
-func SanitizeFileName(name string) string {
-	reg := regexp.MustCompile(`[^a-zA-Z0-9.-]`)
-	clean := reg.ReplaceAllString(name, "-")
-	regDash := regexp.MustCompile(`-+`)
-	return regDash.ReplaceAllString(clean, "-")
-}
-
-func UploadLampiranToR2(ctx context.Context, fileHeader *multipart.FileHeader, prefix string, suratID string) (string, error) {
-	if S3Client == nil {
-		return "", fmt.Errorf("Cloudflare R2 client is not initialized")
-	}
-
-	file, err := fileHeader.Open()
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	buf := bytes.NewBuffer(nil)
-	if _, err := io.Copy(buf, file); err != nil {
-		return "", err
-	}
-
-	cleanName := SanitizeFileName(fileHeader.Filename)
-	timestamp := time.Now().UnixNano() / int64(time.Millisecond)
-	key := fmt.Sprintf("lampiran-%s/%s/%d-%s", prefix, suratID, timestamp, cleanName)
-
-	contentType := fileHeader.Header.Get("Content-Type")
-	if contentType == "" {
-		ext := strings.ToLower(filepath.Ext(cleanName))
-		if ext == ".pdf" {
-			contentType = "application/pdf"
-		} else {
-			contentType = "application/octet-stream"
-		}
-	}
-
-	cacheControl := "public, max-age=31536000, immutable"
-	contentDisposition := "inline"
-
-	_, err = S3Client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket:             aws.String(R2Bucket),
-		Key:                aws.String(key),
-		Body:               bytes.NewReader(buf.Bytes()),
-		ContentType:        aws.String(contentType),
-		ContentDisposition: aws.String(contentDisposition),
-		CacheControl:       aws.String(cacheControl),
-	})
-	if err != nil {
-		return "", fmt.Errorf("R2 upload error: %w", err)
-	}
-
-	apiURL := os.Getenv("NEXT_PUBLIC_API_URL")
-	if apiURL == "" {
-		apiURL = "http://localhost:8080/api/v1"
-	}
-	if R2PublicURL != "" && !strings.Contains(R2PublicURL, "r2.dev") {
-		return fmt.Sprintf("%s/%s", strings.TrimRight(R2PublicURL, "/"), key), nil
-	}
-	publicURL := fmt.Sprintf("%s/lampiran/%s", strings.TrimRight(apiURL, "/"), key)
-	return publicURL, nil
-}
-
-func DeleteLampiranFromR2(ctx context.Context, rawURL string) error {
-	if S3Client == nil || rawURL == "" {
-		return nil
-	}
-
-	key := rawURL
-	if strings.HasPrefix(rawURL, R2PublicURL) {
-		key = strings.TrimPrefix(rawURL, R2PublicURL+"/")
-	} else if strings.Contains(rawURL, "/data-surat/") {
-		parts := strings.Split(rawURL, "/data-surat/")
-		if len(parts) > 1 {
-			key = parts[1]
-		}
-	}
-
-	if key == "" {
-		return nil
-	}
-
-	_, err := S3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
-		Bucket: aws.String(R2Bucket),
-		Key:    aws.String(key),
-	})
-	return err
 }

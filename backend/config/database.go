@@ -30,9 +30,11 @@ func InitDB() {
 	// Disable prepared statement caching for Supabase PgBouncer pooler compatibility
 	config.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
 
-	config.MaxConns = 25
-	config.MinConns = 5
-	config.MaxConnIdleTime = 15 * time.Minute
+	config.MaxConns = 30
+	config.MinConns = 10
+	config.MaxConnLifetime = 1 * time.Hour
+	config.MaxConnIdleTime = 30 * time.Minute
+	config.HealthCheckPeriod = 1 * time.Minute
 
 	pool, err := pgxpool.NewWithConfig(ctx, config)
 	if err != nil {

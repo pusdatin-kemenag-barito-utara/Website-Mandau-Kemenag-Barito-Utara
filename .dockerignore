@@ -1,0 +1,81 @@
+# ==============================================================================
+# SI MANDAU Docker Build Ignore File
+# Keeps Docker context lightweight and prevents local artifacts / secrets leak
+# ==============================================================================
+
+# Git & IDEs
+.git
+.gitignore
+.vscode
+.idea
+.agents
+.gemini
+.antigravitycli
+.claude
+.opencode
+
+# Local Dependencies
+node_modules
+frontend/node_modules
+backend/vendor
+
+# Build Outputs & Cache
+dist
+frontend/dist
+build
+frontend/build
+out
+frontend/out
+.astro
+frontend/.astro
+.next
+frontend/.next
+.cache
+frontend/.cache
+.turbo
+
+# Go binaries & temporary files
+backend/tmp
+tmp
+bin
+backend/bin
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+backend/api-mandau
+api-mandau
+backend/main
+main
+
+# Secrets & Environment files
+.env
+.env.*
+*.pem
+*.key
+*.crt
+credentials.json
+service-account*.json
+ptsp-kemenag-drive*.json
+backend/ptsp-kemenag-drive*.json
+
+# Logs & Tests
+*.log
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+coverage
+test-results
+playwright-report
+blob-report
+playwright/.cache
+
+# Documentation & Misc
+*.md
+LICENSE
+Dockerfile*
+docker-compose*.yml

@@ -1,0 +1,51 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import { AdminApp } from "@/components/admin/admin-app";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+
+const user = Astro.locals.user;
+
+if (!user) {
+  return Astro.redirect("/login");
+}
+
+const userEmail = user.email || "";
+const userName = user.name || "Admin";
+const userRole = user.role || "Admin Surat";
+const userAvatar = user.avatar || null;
+const isSuperAdmin = Boolean(
+  user.is_super_admin ||
+    user.isSuper ||
+    user.role === "super_admin" ||
+    user.role === "Super Admin" ||
+    userEmail === process.env.SUPER_ADMIN_EMAIL,
+);
+---
+
+<RootLayout title={title} description={description} image={image}>
+  <script is:inline>
+    // If restored from browser Back/Forward Cache (bfcache), force fresh reload to trigger server middleware auth check
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    });
+  </script>
+  <AdminApp
+    client:load
+    userEmail={userEmail}
+    userName={userName}
+    userRole={userRole}
+    userAvatar={userAvatar}
+    isSuperAdmin={isSuperAdmin}
+  >
+    <slot />
+  </AdminApp>
+</RootLayout>

@@ -1,0 +1,18 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+
+const pusdatinUrl = import.meta.env.PUBLIC_PUSDATIN_URL || "";
+---
+
+<RootLayout
+  title="Sistem Sedang Pemeliharaan | SI MANDAU Kemenag Barito Utara"
+  description="Layanan SI MANDAU saat ini sedang dalam proses pemeliharaan sistem rutin."
+>
+  <main class="fixed inset-0 z-[99999] bg-[#f8fafc] w-screen h-screen">
+    <iframe
+      src={`${pusdatinUrl}/maintenance?app=Si+Mandau`}
+      class="w-full h-full border-none"
+      title="Sistem Sedang Pemeliharaan"
+    />
+  </main>
+</RootLayout>

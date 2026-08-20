@@ -1,11 +1,12 @@
-# ==========================================
-# SI MANDAU Monorepo - Git Ignore Rules
-# ==========================================
+# ==============================================================================
+# SI MANDAU KEMENAG BARITO UTARA - Centralized Monorepo Git Ignore
+# Covers: Root, Frontend (Astro 5 / React 19 / Vite), Backend (Go / Air / Fiber)
+# ==============================================================================
 
-# ── Dependencies ──
+# ── 1. Monorepo & Package Manager Dependencies ──
 node_modules/
-frontend/node_modules/
-backend/vendor/
+*/node_modules/
+**/node_modules/
 .pnp
 .pnp.*
 .yarn/*
@@ -14,23 +15,47 @@ backend/vendor/
 !.yarn/releases
 !.yarn/versions
 
-# ── Next.js & Frontend Build Outputs ──
-.next/
-frontend/.next/
-out/
-frontend/out/
-build/
-frontend/build/
+# ── 2. Frontend Build Artifacts (Astro, Vite, Next.js) ──
+.astro/
+*/.astro/
+**/.astro/
 dist/
-frontend/dist/
+*/dist/
+**/dist/
+build/
+*/build/
+**/build/
+out/
+*/out/
+**/out/
+.next/
+*/.next/
+**/.next/
 .cache/
+*/.cache/
+**/.cache/
 .turbo/
+*/.turbo/
+**/.turbo/
 
-# ── Golang & Backend Binaries ──
+# ── 3. Golang Backend Artifacts & Air Hot-Reload ──
+# Air temporary binary & build directory
+tmp/
+backend/tmp/
+**/tmp/
+bin/
+backend/bin/
+**/bin/
+
+# Compiled Executables and Binaries
 backend/api-mandau
 backend/api-mandau.exe
-backend/bin/
-backend/*.exe
+api-mandau
+api-mandau.exe
+main
+main.exe
+backend/main
+backend/main.exe
 *.exe
 *.exe~
 *.dll
@@ -39,36 +64,56 @@ backend/*.exe
 *.test
 *.out
 
-# ── Environment Variables & Secrets ──
+# Go Workspace & CGO outputs
+go.work
+go.work.sum
+backend/vendor/
+**/vendor/
+
+# ── 4. Environment Variables & Secrets (Security Critical) ──
 .env
-.env.local
-.env.*.local
-.env.production
-.env.staging
+.env.*
+!.env.example
+!.env.template
 *.pem
 *.key
 *.crt
+*.pfx
+*.p12
+*.token
+credentials.json
+service-account*.json
+ptsp-kemenag-drive*.json
+backend/ptsp-kemenag-drive*.json
 
-# ── Logs & Debugging ──
+# ── 5. TypeScript & Cache Outputs ──
+*.tsbuildinfo
+*/.tsbuildinfo
+**/*.tsbuildinfo
+next-env.d.ts
+*/next-env.d.ts
+
+# ── 6. Logs & Debugging ──
 *.log
+logs/
+*/logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# ── Testing & Coverage Reports ──
+# ── 7. Testing, Coverage & Playwright ──
 coverage/
-frontend/coverage/
+*/coverage/
+**/coverage/
+.nyc_output/
 test-results/
 playwright-report/
+blob-report/
+playwright/.cache/
 
-# ── TypeScript & Build Cache ──
-*.tsbuildinfo
-frontend/*.tsbuildinfo
-next-env.d.ts
-frontend/next-env.d.ts
-
-# ── System & OS Files ──
+# ── 8. OS & System Metadata ──
 .DS_Store
 .DS_Store?
 ._*
@@ -76,8 +121,9 @@ frontend/next-env.d.ts
 .Trashes
 ehthumbs.db
 Thumbs.db
+[Dd]esktop.ini
 
-# ── IDE & Editor Settings ──
+# ── 9. IDEs & Editors ──
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -89,11 +135,13 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+*.swo
+*.swn
 
-# ── Temporary & Scratch Files ──
+# ── 10. AI Agent & Scratch Files ──
 .claude/
 .opencode/
 .antigravitycli/
 .gemini/
 scratch/
-tmp/
+*/scratch/

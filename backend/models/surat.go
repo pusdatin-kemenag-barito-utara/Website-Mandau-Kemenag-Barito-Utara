@@ -31,24 +31,24 @@ type SuratKeluar struct {
 }
 
 type MasterOption struct {
-	ID        string    `json:"id"`
-	Category  string    `json:"category"`
-	Code      string    `json:"code"`
-	Name      string    `json:"name"`
-	BadgeColor string   `json:"badge_color"`
-	SortOrder int       `json:"sort_order"`
-	IsActive  bool      `json:"is_active"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID         string    `json:"id"`
+	Category   string    `json:"category"`
+	Code       string    `json:"code"`
+	Name       string    `json:"name"`
+	BadgeColor string    `json:"badge_color"`
+	SortOrder  int       `json:"sort_order"`
+	IsActive   bool      `json:"is_active"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 type User struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	Role      string `json:"role"`
-	Avatar    string `json:"avatar"`
-	IsSuper   bool   `json:"is_super_admin"`
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Role    string `json:"role"`
+	Avatar  string `json:"avatar"`
+	IsSuper bool   `json:"is_super_admin"`
 }
 
 type LoginRequest struct {
@@ -65,4 +65,13 @@ type APIResponse struct {
 	Total    int         `json:"total,omitempty"`
 	Page     int         `json:"page,omitempty"`
 	PageSize int         `json:"pageSize,omitempty"`
+}
+
+type DashboardStats struct {
+	TotalSuratMasuk     int          `json:"totalSuratMasuk"`
+	TotalSuratKeluar    int          `json:"totalSuratKeluar"`
+	SuratMasukBulanIni  int          `json:"suratMasukBulanIni"`
+	SuratKeluarBulanIni int          `json:"suratKeluarBulanIni"`
+	RecentSuratMasuk    []SuratMasuk `json:"recentSuratMasuk"`
+	RecentSuratKeluar   []SuratKeluar `json:"recentSuratKeluar"`
 }
