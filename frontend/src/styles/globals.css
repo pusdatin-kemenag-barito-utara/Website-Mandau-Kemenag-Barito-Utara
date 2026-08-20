@@ -46,6 +46,10 @@ input:-webkit-autofill:active {
 /* Sonner Toast Notification Styling */
 [data-sonner-toaster] {
   position: fixed !important;
+  top: 1.25rem !important;
+  right: 1.25rem !important;
+  left: auto !important;
+  bottom: auto !important;
   z-index: 999999 !important;
   font-family: var(--font-jakarta), system-ui, sans-serif !important;
 }
