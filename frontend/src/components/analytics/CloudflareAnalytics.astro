@@ -1,0 +1,28 @@
+---
+interface Props {
+  token?: string;
+  spa?: boolean;
+}
+
+const {
+  token = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN ||
+    import.meta.env.PUBLIC_CLOUDFLARE_BEACON_TOKEN ||
+    process.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN ||
+    "",
+  spa = true,
+} = Astro.props;
+
+const isProduction = import.meta.env.PROD;
+---
+
+{token && isProduction && (
+  <script
+    is:inline
+    defer
+    src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon={JSON.stringify({
+      token,
+      spa,
+    })}
+  />
+)}

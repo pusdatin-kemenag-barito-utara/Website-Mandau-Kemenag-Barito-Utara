@@ -6,7 +6,7 @@
 # ==============================================================================
 
 # ── Stage 1: Build Golang API Backend ──
-FROM golang:1.23-alpine AS backend-builder
+FROM golang:alpine AS backend-builder
 WORKDIR /app/backend
 RUN apk add --no-cache git ca-certificates tzdata
 COPY backend/go.mod backend/go.sum ./

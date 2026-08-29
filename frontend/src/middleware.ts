@@ -4,7 +4,7 @@ import type { AuthUser } from "@/lib/api-client";
 const AUTH_COOKIE = "sb-esurat-auth-token";
 const GO_API_BASE = process.env.GO_API_URL || "http://127.0.0.1:8080";
 
-const PUBLIC_PATHS = new Set(["/login", "/unauthorized", "/maintenance"]);
+const PUBLIC_PATHS = new Set(["/login", "/unauthorized", "/maintenance", "/offline"]);
 const SKIP_PREFIXES = [
   "/api/",
   "/_astro/",
@@ -28,17 +28,18 @@ const SECURITY_HEADERS: Record<string, string> = {
   "Pragma": "no-cache",
   "Expires": "0",
   "Alt-Svc": 'h3=":443"; ma=86400, h3-29=":443"; ma=86400',
-  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), display-capture=()",
   "X-XSS-Protection": "1; mode=block",
   "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+  "Link": "<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, </mandau.png>; rel=preload; as=image; fetchpriority=high",
   "Content-Security-Policy": [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://*.cloudflareinsights.com",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://*.cloudflareinsights.com https://www.googletagmanager.com https://*.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' data: https://fonts.gstatic.com",
-    "img-src 'self' data: blob: https: http:",
-    `frame-src 'self' blob: http://localhost:8080 http://127.0.0.1:8080 https://challenges.cloudflare.com ${process.env.PUBLIC_PUSDATIN_URL || ""}`,
-    `connect-src 'self' http://localhost:8080 http://127.0.0.1:8080 https://challenges.cloudflare.com https://*.cloudflareinsights.com ${process.env.PUBLIC_PUSDATIN_URL || ""}`,
+    "img-src 'self' data: blob: https: http: https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.kemenag-baritoutara.com",
+    "frame-src 'self' blob: http://localhost:8080 http://127.0.0.1:8080 https://challenges.cloudflare.com https://www.googletagmanager.com https://pusdatin.kemenag-baritoutara.com https://*.kemenag-baritoutara.com",
+    "connect-src 'self' http://localhost:8080 http://127.0.0.1:8080 https://challenges.cloudflare.com https://cloudflareinsights.com https://*.cloudflareinsights.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://pusdatin.kemenag-baritoutara.com https://*.kemenag-baritoutara.com",
     "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
@@ -70,6 +71,12 @@ async function fetchCurrentUser(token: string): Promise<AuthUser | null> {
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = new URL(context.request.url);
+
+  // Jika sistem sedang dalam mode maintenance dari Pusdatin, langsung arahkan ke /maintenance
+  const isMaintenanceActive = context.cookies.get("sys_maintenance")?.value === "true";
+  if (isMaintenanceActive && pathname !== "/maintenance" && !SKIP_PREFIXES.some((p) => pathname.startsWith(p))) {
+    return context.redirect("/maintenance");
+  }
 
   if (PUBLIC_PATHS.has(pathname) || SKIP_PREFIXES.some((p) => pathname.startsWith(p))) {
     return next();

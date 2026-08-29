@@ -537,6 +537,8 @@ export function SuratKeluarManager({
         <div className="relative flex-1 min-w-[280px]">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
+            id="search_surat_keluar"
+            name="search_surat_keluar"
             type="text"
             placeholder="Cari nomor, tujuan, perihal..."
             value={search}
@@ -1052,48 +1054,52 @@ export function SuratKeluarManager({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-[200] flex items-center justify-center p-2.5 sm:p-4 md:p-6 bg-black/60 backdrop-blur-sm overflow-y-auto"
           >
             <m.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="w-full max-w-4xl bg-white dark:bg-[#181b22] rounded-3xl shadow-2xl border border-slate-200/80 dark:border-white/10 max-h-[92vh] overflow-y-auto custom-scrollbar flex flex-col"
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="w-full max-w-4xl bg-white dark:bg-[#151921] rounded-2xl sm:rounded-[2rem] shadow-2xl border border-slate-200/90 dark:border-white/10 max-h-[95vh] sm:max-h-[92vh] overflow-y-auto custom-scrollbar flex flex-col my-auto"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4.5 border-b border-slate-100 dark:border-white/5 bg-slate-50/60 dark:bg-white/[0.02] shrink-0">
+              <div className="flex items-center justify-between px-4 sm:px-8 py-3.5 sm:py-5 border-b border-slate-100 dark:border-white/5 bg-slate-50/70 dark:bg-white/[0.02] shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-2xl bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center border border-violet-100 dark:border-violet-500/20 shadow-2xs">
-                    <FileOutput className="h-5 w-5" />
+                  <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl sm:rounded-2xl bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center border border-violet-100 dark:border-violet-500/20 shadow-xs shrink-0">
+                    <FileOutput className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                   </div>
                   <div>
-                    <h2 className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+                    <h2 className="text-sm sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">
                       {editingId ? "Edit Surat Keluar" : "Terbitkan Surat Keluar Baru"}
                     </h2>
-                    <p className="text-[11px] font-medium text-slate-400">
+                    <p className="text-[11px] sm:text-xs font-medium text-slate-400 dark:text-slate-500 mt-0.5">
                       Isi rincian naskah surat keluar di bawah ini
                     </p>
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setShowForm(false)}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition-all text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                  className="p-2 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition-all text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
               {/* Modal Body */}
-              <div className="p-6 space-y-4 flex-1">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 sm:p-8 space-y-4 sm:space-y-5 flex-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      Nomor Surat <span className="text-red-500">*</span>
+                    <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block ml-1">
+                      Nomor Surat <span className="text-rose-500">*</span>
                     </label>
                     <input
+                      id="nomor_surat_keluar"
+                      name="nomor_surat"
                       required
                       type="text"
-                      className="w-full px-4 py-2.5 bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none font-mono"
+                      className="w-full h-11 sm:h-12 px-4 bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-xl sm:rounded-2xl text-xs sm:text-sm text-slate-900 dark:text-white font-mono font-medium focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
                       placeholder="B-___/Kk.17.05/1/BA.01/__/2026"
                       value={formData.nomor_surat}
                       onChange={(e) =>
@@ -1106,7 +1112,7 @@ export function SuratKeluarManager({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                    <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block ml-1">
                       Status Publikasi
                     </label>
                     <ModernSelect
@@ -1130,10 +1136,10 @@ export function SuratKeluarManager({
                   }
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      Jenis Agenda <span className="text-red-500">*</span>
+                    <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block ml-1">
+                      Jenis Agenda <span className="text-rose-500">*</span>
                     </label>
                     <ModernSelect
                       name="agenda"
@@ -1148,8 +1154,8 @@ export function SuratKeluarManager({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      Unit Kerja Pengirim <span className="text-red-500">*</span>
+                    <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block ml-1">
+                      Unit Kerja Pengirim <span className="text-rose-500">*</span>
                     </label>
                     <ModernSelect
                       name="unit_kerja"
@@ -1165,13 +1171,15 @@ export function SuratKeluarManager({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                    Tujuan Surat / Penerima <span className="text-red-500">*</span>
+                  <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block ml-1">
+                    Tujuan Surat / Penerima <span className="text-rose-500">*</span>
                   </label>
                   <input
+                    id="tujuan_surat_keluar"
+                    name="tujuan_surat"
                     required
                     type="text"
-                    className="w-full px-4 py-2.5 bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none"
+                    className="w-full h-11 sm:h-12 px-4 bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-xl sm:rounded-2xl text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
                     placeholder="Contoh: Kepala KPPN Buntok / Bupati Barito Utara"
                     value={formData.tujuan_surat}
                     onChange={(e) => {
@@ -1193,13 +1201,15 @@ export function SuratKeluarManager({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                    Perihal Surat <span className="text-red-500">*</span>
+                  <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block ml-1">
+                    Perihal Surat <span className="text-rose-500">*</span>
                   </label>
                   <textarea
+                    id="perihal_surat_keluar"
+                    name="perihal"
                     required
                     rows={3}
-                    className="w-full px-4 py-2.5 bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none resize-none"
+                    className="w-full min-h-[90px] sm:min-h-[96px] p-3.5 sm:p-4 bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-xl sm:rounded-2xl text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none resize-none leading-relaxed"
                     placeholder="Tulis perihal atau inti isi surat keluar..."
                     value={formData.perihal}
                     onChange={(e) =>
@@ -1208,21 +1218,21 @@ export function SuratKeluarManager({
                   />
                 </div>
 
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {formData.lampiran && !lampiranFile && (
-                    <div className="flex items-center justify-between p-3.5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-200/80 dark:border-emerald-500/20 text-xs font-semibold text-emerald-900 dark:text-emerald-200 mb-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-200/80 dark:border-emerald-500/20 text-xs font-semibold text-emerald-900 dark:text-emerald-200 gap-2 mb-2">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <Paperclip className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                         <span className="truncate font-medium">Lampiran PDF tersimpan saat ini</span>
                       </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
                         <button
                           type="button"
                           onClick={() => {
                             setPdfViewerUrl(formData.lampiran);
                             setPdfViewerTitle(formData.perihal || "Lampiran PDF");
                           }}
-                          className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-2xs transition-all inline-flex items-center gap-1.5"
+                          className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           <span>Lihat File</span>
@@ -1231,7 +1241,7 @@ export function SuratKeluarManager({
                           type="button"
                           onClick={confirmDeleteLampiran}
                           disabled={deletingLampiran}
-                          className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white text-[11px] font-bold shadow-2xs transition-all inline-flex items-center gap-1.5"
+                          className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white text-[11px] font-bold shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
                         >
                           {deletingLampiran ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1243,14 +1253,14 @@ export function SuratKeluarManager({
                       </div>
                     </div>
                   )}
-                  <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block ml-1">
                     Upload Lampiran PDF{" "}
                     <span className="text-slate-400 dark:text-slate-500 font-normal normal-case">
-                      ({formData.lampiran ? "opsional, unggah untuk mengganti file" : "opsional, maks 2MB"})
+                      ({formData.lampiran ? "opsional, unggah untuk mengganti file" : "opsional, format PDF maks 2MB"})
                     </span>
                   </label>
                   <label
-                    className={`flex items-center justify-between px-4 py-3 bg-slate-50/80 dark:bg-white/[0.02] border border-dashed rounded-2xl cursor-pointer transition-all
+                    className={`flex items-center justify-between px-3.5 sm:px-4 py-3 sm:py-3.5 bg-slate-50/80 dark:bg-white/[0.02] border border-dashed rounded-xl sm:rounded-2xl cursor-pointer transition-all
                       ${isDraggingFile ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-500/10" : "border-slate-300 dark:border-white/10 hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:bg-emerald-50/30 dark:hover:bg-emerald-500/5"}
                     `}
                     onDragOver={(e) => {
@@ -1275,12 +1285,12 @@ export function SuratKeluarManager({
                       }
                     }}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-xl bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 flex items-center justify-center">
-                        <Upload className="h-4 w-4" />
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                      <div className="h-8.5 w-8.5 sm:h-9 sm:w-9 rounded-xl bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 flex items-center justify-center shrink-0">
+                        <Upload className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
                       </div>
                       <span
-                        className={`text-xs font-semibold ${isDraggingFile ? "text-emerald-600" : "text-slate-600 dark:text-slate-300"}`}
+                        className={`text-xs sm:text-sm font-semibold truncate ${isDraggingFile ? "text-emerald-600" : "text-slate-600 dark:text-slate-300"}`}
                       >
                         {lampiranFile
                           ? lampiranFile.name
@@ -1297,7 +1307,7 @@ export function SuratKeluarManager({
                           e.preventDefault();
                           setLampiranFile(null);
                         }}
-                        className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 text-slate-400 hover:text-slate-600"
+                        className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 text-slate-400 hover:text-slate-600 cursor-pointer shrink-0"
                         title="Hapus pilihan file"
                       >
                         <X className="h-4 w-4" />
@@ -1305,6 +1315,8 @@ export function SuratKeluarManager({
                     )}
 
                     <input
+                      id="lampiran_surat_keluar"
+                      name="lampiran_file"
                       type="file"
                       accept=".pdf"
                       className="hidden"
@@ -1332,11 +1344,11 @@ export function SuratKeluarManager({
               </div>
 
               {/* Modal Footer */}
-              <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 dark:border-white/5 bg-slate-50/60 dark:bg-white/[0.02] shrink-0">
+              <div className="flex items-center justify-end gap-2.5 sm:gap-3 px-4 sm:px-8 py-3.5 sm:py-4.5 border-t border-slate-100 dark:border-white/5 bg-slate-50/70 dark:bg-white/[0.02] shrink-0">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition-all"
+                  className="px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl sm:rounded-2xl transition-all cursor-pointer"
                 >
                   Batal
                 </button>
@@ -1344,7 +1356,7 @@ export function SuratKeluarManager({
                   type="button"
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 shadow-md shadow-emerald-600/20 active:scale-95"
+                  className="h-10 sm:h-12 flex items-center gap-2 px-5 sm:px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold transition-all disabled:opacity-50 shadow-lg shadow-emerald-600/25 active:scale-[0.99] cursor-pointer"
                 >
                   {submitting && (
                     <Loader2 className="h-4 w-4 animate-spin" />

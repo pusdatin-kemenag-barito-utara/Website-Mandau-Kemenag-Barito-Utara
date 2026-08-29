@@ -4,16 +4,16 @@ import (
 	"e-surat-backend/handlers"
 	"e-surat-backend/middleware"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 func Setup(app *fiber.App) {
 	// Health Check Endpoints (Root, /health, /api/health, /api/v1/health)
-	healthHandler := func(c *fiber.Ctx) error {
+	healthHandler := func(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"status":  "healthy",
 			"service": "SI MANDAU Golang Backend API",
-			"version": "v2.0",
+			"version": "v3.0",
 		})
 	}
 	app.Get("/health", healthHandler)

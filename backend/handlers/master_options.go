@@ -7,10 +7,10 @@ import (
 	"e-surat-backend/pkg/response"
 	"e-surat-backend/services"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
-func GetMasterOptionsHandler(c *fiber.Ctx) error {
+func GetMasterOptionsHandler(c fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -21,7 +21,7 @@ func GetMasterOptionsHandler(c *fiber.Ctx) error {
 	return response.OK(c, list)
 }
 
-func CreateMasterOptionHandler(c *fiber.Ctx) error {
+func CreateMasterOptionHandler(c fiber.Ctx) error {
 	var req struct {
 		Category   string `json:"category"`
 		Code       string `json:"code"`
@@ -29,7 +29,7 @@ func CreateMasterOptionHandler(c *fiber.Ctx) error {
 		BadgeColor string `json:"badge_color"`
 		SortOrder  int    `json:"sort_order"`
 	}
-	if err := c.BodyParser(&req); err != nil || req.Category == "" || req.Name == "" {
+	if err := c.Bind().Body(&req); err != nil || req.Category == "" || req.Name == "" {
 		return response.BadRequest(c, "Kategori dan nama opsi master wajib diisi.")
 	}
 
@@ -45,7 +45,7 @@ func CreateMasterOptionHandler(c *fiber.Ctx) error {
 	return response.Created(c, "Opsi master berhasil ditambahkan.", fiber.Map{"id": newID})
 }
 
-func UpdateMasterOptionHandler(c *fiber.Ctx) error {
+func UpdateMasterOptionHandler(c fiber.Ctx) error {
 	id := c.Params("id")
 	var req struct {
 		Category   string `json:"category"`
@@ -55,7 +55,7 @@ func UpdateMasterOptionHandler(c *fiber.Ctx) error {
 		SortOrder  int    `json:"sort_order"`
 		IsActive   bool   `json:"is_active"`
 	}
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.Bind().Body(&req); err != nil {
 		return response.BadRequest(c, "Format masukan tidak valid.")
 	}
 
@@ -70,7 +70,7 @@ func UpdateMasterOptionHandler(c *fiber.Ctx) error {
 	return response.Message(c, "Opsi master berhasil diperbarui.")
 }
 
-func DeleteMasterOptionHandler(c *fiber.Ctx) error {
+func DeleteMasterOptionHandler(c fiber.Ctx) error {
 	id := c.Params("id")
 	userEmail, _ := c.Locals("userEmail").(string)
 

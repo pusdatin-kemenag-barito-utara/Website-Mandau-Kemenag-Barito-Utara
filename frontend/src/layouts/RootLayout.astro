@@ -2,6 +2,8 @@
 import "@/styles/globals.css";
 import { Toaster } from "sonner";
 import { MaintenanceBlocker } from "@/components/providers/maintenance-blocker";
+import CloudflareAnalytics from "@/components/analytics/CloudflareAnalytics.astro";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics.astro";
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
@@ -91,8 +93,15 @@ const jsonLd = {
     <!-- Priority & Resource Hints -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
+    <link rel="dns-prefetch" href="https://cloudflareinsights.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
     <link rel="preload" href="/mandau.png" as="image" type="image/png" fetchpriority="high" />
 
     <!-- Typography -->
@@ -101,12 +110,20 @@ const jsonLd = {
       rel="stylesheet"
     />
 
-    <!-- SEO & Metadata -->
+    <!-- SEO & Core Metadata -->
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content="Pusdatin Kemenag Barito Utara" />
+    <meta name="publisher" content="Kantor Kementerian Agama Kabupaten Barito Utara" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="theme-color" content="#064e3b" />
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
     <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Adaptive Theme Color (Light & Dark System Mode) -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#064e3b" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1117" />
+    <meta name="msapplication-TileColor" content="#064e3b" />
+    <meta name="msapplication-TileImage" content="/mandau.png" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -132,6 +149,7 @@ const jsonLd = {
 
     <!-- Progressive Web App (PWA) & Mobile Web Standards -->
     <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/kemenag.svg" type="image/svg+xml" />
     <link rel="icon" href="/mandau.png" type="image/png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/mandau.png" sizes="180x180" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -139,8 +157,6 @@ const jsonLd = {
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="SI MANDAU" />
     <meta name="application-name" content="SI MANDAU" />
-    <meta name="msapplication-TileColor" content="#064e3b" />
-    <meta name="msapplication-TileImage" content="/mandau.png" />
 
     <!-- Structured Data (JSON-LD) -->
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -156,10 +172,22 @@ const jsonLd = {
         } catch (e) {}
       })();
     </script>
+    <!-- Google Tag Manager & Google Analytics 4 -->
+    <GoogleAnalytics />
   </head>
   <body
     class="min-h-full flex flex-col bg-slate-50 dark:bg-[#0f1117] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300"
   >
+    { (import.meta.env.PUBLIC_GTM_ID || process.env.PUBLIC_GTM_ID) && (
+      <noscript>
+        <iframe
+          src={`https://www.googletagmanager.com/ns.html?id=${import.meta.env.PUBLIC_GTM_ID || process.env.PUBLIC_GTM_ID}`}
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"
+        />
+      </noscript>
+    )}
     <slot />
     <Toaster
       client:load
@@ -174,6 +202,7 @@ const jsonLd = {
       }}
     />
     <MaintenanceBlocker client:load />
+    <CloudflareAnalytics />
 
     <!-- Resilient Enterprise Service Worker Registration -->
     <script is:inline>

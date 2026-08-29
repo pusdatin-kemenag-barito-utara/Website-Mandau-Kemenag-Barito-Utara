@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "id": "https://surat.kemenag-baritoutara.com/",
+  "id": "/",
   "name": "SI MANDAU - E-Surat Kemenag Barito Utara",
   "short_name": "SI MANDAU",
   "description": "Portal Resmi Sistem Informasi Manajemen Persuratan Elektronik Kementerian Agama Kabupaten Barito Utara",
@@ -15,6 +15,9 @@
     "minimal-ui",
     "browser"
   ],
+  "launch_handler": {
+    "client_mode": ["focus-existing", "navigate-new"]
+  },
   "orientation": "any",
   "background_color": "#064e3b",
   "theme_color": "#064e3b",

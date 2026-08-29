@@ -10,10 +10,10 @@ import (
 	"e-surat-backend/repositories"
 	"e-surat-backend/services"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
-func GetSuratMasukListHandler(c *fiber.Ctx) error {
+func GetSuratMasukListHandler(c fiber.Ctx) error {
 	page, pageSize := parsePagination(c)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -26,7 +26,7 @@ func GetSuratMasukListHandler(c *fiber.Ctx) error {
 	return response.OKWithTotal(c, list, total, page, pageSize)
 }
 
-func GetSuratMasukDetailHandler(c *fiber.Ctx) error {
+func GetSuratMasukDetailHandler(c fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
 		return response.BadRequest(c, "ID surat masuk wajib diisi.")
@@ -46,7 +46,7 @@ func GetSuratMasukDetailHandler(c *fiber.Ctx) error {
 	return response.OK(c, item)
 }
 
-func CreateSuratMasukHandler(c *fiber.Ctx) error {
+func CreateSuratMasukHandler(c fiber.Ctx) error {
 	in := services.SuratMasukInput{
 		NomorSurat:    c.FormValue("nomor_surat"),
 		TanggalSurat:  c.FormValue("tanggal_surat"),
@@ -90,7 +90,7 @@ func CreateSuratMasukHandler(c *fiber.Ctx) error {
 	return response.Created(c, "Surat masuk berhasil dicatat.", fiber.Map{"id": id})
 }
 
-func UpdateSuratMasukHandler(c *fiber.Ctx) error {
+func UpdateSuratMasukHandler(c fiber.Ctx) error {
 	id := c.Params("id")
 
 	in := services.SuratMasukInput{
@@ -123,7 +123,7 @@ func UpdateSuratMasukHandler(c *fiber.Ctx) error {
 	return response.Message(c, "Surat masuk berhasil diperbarui.")
 }
 
-func DeleteSuratMasukHandler(c *fiber.Ctx) error {
+func DeleteSuratMasukHandler(c fiber.Ctx) error {
 	id := c.Params("id")
 	userEmail, _ := c.Locals("userEmail").(string)
 
@@ -136,12 +136,12 @@ func DeleteSuratMasukHandler(c *fiber.Ctx) error {
 	return response.Message(c, "Surat masuk berhasil dihapus.")
 }
 
-func ArchiveSuratMasukHandler(c *fiber.Ctx) error {
+func ArchiveSuratMasukHandler(c fiber.Ctx) error {
 	id := c.Params("id")
 	var req struct {
 		IsArchived bool `json:"is_archived"`
 	}
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.Bind().Body(&req); err != nil {
 		return response.BadRequest(c, "Format request tidak valid.")
 	}
 

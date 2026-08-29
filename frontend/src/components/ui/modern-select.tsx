@@ -135,6 +135,8 @@ export function ModernSelect({
                 <Search className="h-4 w-4 text-slate-400 dark:text-slate-500 ml-2" />
                 <input
                   ref={searchInputRef}
+                  id={`search_${name || "select"}`}
+                  name={`search_${name || "select"}`}
                   type="text"
                   inputMode={isMobile() ? "none" : "text"}
                   readOnly={isMobile()}

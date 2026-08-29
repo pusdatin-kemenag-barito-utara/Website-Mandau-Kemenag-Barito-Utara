@@ -8,11 +8,29 @@ const pusdatinUrl = import.meta.env.PUBLIC_PUSDATIN_URL || "";
   title="Sistem Sedang Pemeliharaan | SI MANDAU Kemenag Barito Utara"
   description="Layanan SI MANDAU saat ini sedang dalam proses pemeliharaan sistem rutin."
 >
-  <main class="fixed inset-0 z-[99999] bg-[#f8fafc] w-screen h-screen">
-    <iframe
-      src={`${pusdatinUrl}/maintenance?app=Si+Mandau`}
-      class="w-full h-full border-none"
-      title="Sistem Sedang Pemeliharaan"
-    />
+  <main class="fixed inset-0 z-[99999] bg-slate-50 dark:bg-[#0f1117] w-screen h-screen overflow-hidden">
+    {pusdatinUrl ? (
+      <iframe
+        src={`${pusdatinUrl}/maintenance?app=Si+Mandau`}
+        class="w-full h-full border-none"
+        title="Sistem Sedang Pemeliharaan"
+      />
+    ) : (
+      <div class="flex flex-col items-center justify-center min-h-screen px-4 text-center">
+        <div class="w-20 h-20 mb-6 rounded-3xl bg-amber-500/10 dark:bg-amber-500/20 border border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 text-3xl shadow-xl animate-pulse">
+          ⚙️
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-3">
+          Sistem Sedang Dalam Pemeliharaan
+        </h1>
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-md mb-8 leading-relaxed">
+          Layanan SI MANDAU Kemenag Barito Utara saat ini sedang dalam proses pemeliharaan rutin oleh tim Pusdatin untuk peningkatan kualitas layanan.
+        </p>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200/60 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-xs font-medium text-slate-600 dark:text-slate-400">
+          <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+          Status akan diperiksa otomatis secara berkala
+        </div>
+      </div>
+    )}
   </main>
 </RootLayout>

@@ -7,19 +7,14 @@ export function MaintenanceBlocker() {
     }
     return false;
   });
-  const [pathname, setPathname] = useState("");
   const pusdatinUrl = import.meta.env.PUBLIC_PUSDATIN_URL || "";
   const appId = "e-surat-kemenag";
-
-  useEffect(() => {
-    setPathname(window.location.pathname);
-  }, []);
 
   useEffect(() => {
     const checkStatus = async () => {
       if (!pusdatinUrl) return;
       try {
-        const timestamp = new Date().getTime();
+        const timestamp = Date.now();
         const res = await fetch(
           `${pusdatinUrl}/api/public/apps/${appId}/status?t=${timestamp}`,
           { cache: "no-store" }
@@ -28,28 +23,33 @@ export function MaintenanceBlocker() {
           const contentType = res.headers.get("content-type");
           if (contentType && contentType.includes("application/json")) {
             const data = await res.json();
+            const currentPath = window.location.pathname;
+
             if (data.status === "maintenance") {
               setIsMaintenance(true);
               sessionStorage.setItem("sys_maintenance", "true");
-              document.cookie = "sys_maintenance=true; path=/; max-age=60";
+              document.cookie = "sys_maintenance=true; path=/; max-age=86400; SameSite=Lax";
               document.body.style.overflow = "hidden";
               document.title = "Sistem Sedang Pemeliharaan";
-              if (pathname !== "/maintenance") {
+
+              // Hanya redirect jika pengguna BELUM berada di halaman /maintenance
+              if (currentPath !== "/maintenance") {
                 window.location.replace("/maintenance");
               }
             } else {
               setIsMaintenance(false);
               sessionStorage.removeItem("sys_maintenance");
-              document.cookie = "sys_maintenance=; path=/; max-age=0";
+              document.cookie = "sys_maintenance=; path=/; max-age=0; SameSite=Lax";
               document.body.style.overflow = "";
-              if (pathname === "/maintenance") {
+
+              // Jika status pemeliharaan sudah selesai dan masih di /maintenance, kembalikan ke beranda
+              if (currentPath === "/maintenance") {
                 window.location.replace("/");
               }
             }
           }
         }
       } catch (err) {
-        // Use console.warn instead of console.error to avoid noisy Dev Overlay
         console.warn(
           "Failed to check maintenance status (could be offline or CORS)",
           err
@@ -57,20 +57,20 @@ export function MaintenanceBlocker() {
       }
     };
 
-    // Check immediately on mount
+    // Cek segera saat komponen dimount
     checkStatus();
 
-    // Polling every 10 seconds to detect changes instantly
+    // Polling berkala setiap 10 detik untuk mendeteksi perubahan status Pusdatin
     const interval = setInterval(checkStatus, 10000);
     return () => {
       clearInterval(interval);
       document.body.style.overflow = "";
     };
-  }, [pathname, pusdatinUrl]);
+  }, [pusdatinUrl]);
 
-  // If on /maintenance page, the page itself renders the iframe.
-  // Otherwise, render full screen overlay immediately when maintenance is true to prevent content flash while route is replacing.
-  if (!isMaintenance || pathname === "/maintenance") return null;
+  // Jika sedang di halaman /maintenance, halaman maintenance.astro sendiri yang merender iframe.
+  const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
+  if (!isMaintenance || currentPath === "/maintenance") return null;
 
   return (
     <div className="fixed inset-0 z-[99999] bg-[#f8fafc]">

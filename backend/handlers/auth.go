@@ -11,10 +11,10 @@ import (
 	"e-surat-backend/pkg/response"
 	"e-surat-backend/services"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
-func LoginHandler(c *fiber.Ctx) error {
+func LoginHandler(c fiber.Ctx) error {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("🔥 CRITICAL LOGIN PANIC RECOVERED: %v\n", r)
@@ -22,7 +22,7 @@ func LoginHandler(c *fiber.Ctx) error {
 	}()
 
 	var req models.LoginRequest
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.Bind().Body(&req); err != nil {
 		return response.BadRequest(c, "Format masukan email atau kata sandi tidak valid.")
 	}
 
@@ -59,7 +59,7 @@ func LoginHandler(c *fiber.Ctx) error {
 	})
 }
 
-func GetMeHandler(c *fiber.Ctx) error {
+func GetMeHandler(c fiber.Ctx) error {
 	userEmail, _ := c.Locals("userEmail").(string)
 	userID, _ := c.Locals("userID").(string)
 
@@ -71,7 +71,7 @@ func GetMeHandler(c *fiber.Ctx) error {
 	return response.OK(c, user)
 }
 
-func LogoutHandler(c *fiber.Ctx) error {
+func LogoutHandler(c fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "sb-esurat-auth-token",
 		Value:    "",

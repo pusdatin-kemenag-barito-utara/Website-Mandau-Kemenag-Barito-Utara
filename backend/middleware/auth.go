@@ -6,7 +6,7 @@ import (
 
 	"e-surat-backend/models"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -20,7 +20,7 @@ func getJWTSecret() string {
 	return secret
 }
 
-func AuthRequired(c *fiber.Ctx) error {
+func AuthRequired(c fiber.Ctx) error {
 	tokenString := c.Cookies("sb-esurat-auth-token")
 
 	if tokenString == "" {

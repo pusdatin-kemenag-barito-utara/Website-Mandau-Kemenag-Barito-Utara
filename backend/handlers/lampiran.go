@@ -11,11 +11,11 @@ import (
 	"e-surat-backend/repositories"
 	"e-surat-backend/services"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 // setIframeHeaders sets headers that allow the PDF to be embedded safely
-func setIframeHeaders(c *fiber.Ctx, contentType string) {
+func setIframeHeaders(c fiber.Ctx, contentType string) {
 	c.Set("Content-Type", contentType)
 	c.Set("Content-Disposition", "inline")
 	c.Set("Cache-Control", "public, max-age=3600")
@@ -25,7 +25,7 @@ func setIframeHeaders(c *fiber.Ctx, contentType string) {
 
 // GetLampiranProxyHandler proxies a PDF file from Cloudflare R2.
 // Reads the entire body into memory before sending (avoids defer-close race with Fiber).
-func GetLampiranProxyHandler(c *fiber.Ctx) error {
+func GetLampiranProxyHandler(c fiber.Ctx) error {
 	key := c.Params("*")
 	if key == "" {
 		return response.BadRequest(c, "File key is required")
@@ -71,7 +71,7 @@ func GetLampiranProxyHandler(c *fiber.Ctx) error {
 }
 
 // DeleteLampiranHandler removes the attachment file from R2 and sets lampiran column to empty in DB
-func DeleteLampiranHandler(c *fiber.Ctx) error {
+func DeleteLampiranHandler(c fiber.Ctx) error {
 	tipe := c.Query("type") // "masuk" or "keluar"
 	id := c.Params("id")
 

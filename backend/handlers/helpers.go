@@ -3,10 +3,10 @@ package handlers
 import (
 	"strconv"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
-func parsePagination(c *fiber.Ctx) (page, pageSize int) {
+func parsePagination(c fiber.Ctx) (page, pageSize int) {
 	page, _ = strconv.Atoi(c.Query("page", "1"))
 	pageSize, _ = strconv.Atoi(c.Query("pageSize", "5000"))
 	if page < 1 {
