@@ -4,7 +4,7 @@ import type { AuthUser } from "@/lib/api-client";
 const AUTH_COOKIE = "sb-esurat-auth-token";
 const GO_API_BASE = process.env.GO_API_URL || "http://127.0.0.1:8080";
 
-const PUBLIC_PATHS = new Set(["/login", "/unauthorized", "/maintenance", "/offline"]);
+const PUBLIC_PATHS = new Set(["/login", "/unauthorized", "/maintenance", "/offline", "/sitemap.xml", "/robots.txt"]);
 const SKIP_PREFIXES = [
   "/api/",
   "/_astro/",
