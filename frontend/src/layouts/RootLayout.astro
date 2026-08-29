@@ -21,6 +21,46 @@ const {
 const siteUrl = "https://surat.kemenag-baritoutara.com";
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 const ogImageUrl = image.startsWith("http") ? image : `${siteUrl}${image}`;
+const pathname = Astro.url.pathname;
+
+const breadcrumbItems = [
+  {
+    "@type": "ListItem",
+    position: 1,
+    name: "Beranda",
+    item: siteUrl,
+  },
+];
+
+if (pathname === "/surat-masuk") {
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: 2,
+    name: "Agenda Surat Masuk",
+    item: `${siteUrl}/surat-masuk`,
+  });
+} else if (pathname === "/surat-keluar") {
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: 2,
+    name: "Agenda Surat Keluar",
+    item: `${siteUrl}/surat-keluar`,
+  });
+} else if (pathname === "/manajemen-surat") {
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: 2,
+    name: "Manajemen Surat",
+    item: `${siteUrl}/manajemen-surat`,
+  });
+} else if (pathname === "/login") {
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: 2,
+    name: "Login Panel Admin",
+    item: `${siteUrl}/login`,
+  });
+}
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -29,7 +69,7 @@ const jsonLd = {
       "@type": "GovernmentOrganization",
       "@id": `${siteUrl}/#organization`,
       name: "Kantor Kementerian Agama Kabupaten Barito Utara",
-      alternateName: ["Kemenag Barito Utara", "Kemenag Batara"],
+      alternateName: ["Kemenag Barito Utara", "Kemenag Batara", "Pusdatin Kemenag Batara"],
       url: siteUrl,
       logo: `${siteUrl}/mandau.png`,
       image: `${siteUrl}/mandau.png`,
@@ -41,16 +81,29 @@ const jsonLd = {
         postalCode: "73811",
         addressCountry: "ID",
       },
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "Customer Support",
+        telephone: "+62-519-21045",
+        email: "baritoutara@kemenag.go.id",
+        areaServed: "ID",
+        availableLanguage: ["Indonesian"],
+      },
     },
     {
       "@type": "SoftwareApplication",
       "@id": `${siteUrl}/#application`,
       name: "SI MANDAU",
+      alternateName: "Sistem Informasi Manajemen Agenda Naskah Dinas & Administrasi Umum",
       applicationCategory: "BusinessApplication",
-      operatingSystem: "All",
+      operatingSystem: "Web, All",
       url: siteUrl,
       description:
-        "Sistem Informasi Manajemen Persuratan Elektronik (E-Surat) Kementerian Agama Kabupaten Barito Utara.",
+        "Sistem Informasi Manajemen Persuratan Elektronik (E-Surat) Kantor Kementerian Agama Kabupaten Barito Utara.",
+      softwareVersion: "3.0.0",
+      author: {
+        "@id": `${siteUrl}/#organization`,
+      },
       offers: {
         "@type": "Offer",
         price: "0",
@@ -70,14 +123,7 @@ const jsonLd = {
     {
       "@type": "BreadcrumbList",
       "@id": `${canonicalUrl}#breadcrumb`,
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Beranda",
-          item: siteUrl,
-        },
-      ],
+      itemListElement: breadcrumbItems,
     },
   ],
 };
@@ -113,11 +159,24 @@ const jsonLd = {
     <!-- SEO & Core Metadata -->
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content="SI MANDAU, E-Surat Kemenag, Tata Naskah Dinas, Kemenag Barito Utara, Kemenag Batara, Kemenag Kalteng, Surat Masuk, Surat Keluar, Muara Teweh, Sistem Informasi Persuratan, Kementerian Agama" />
     <meta name="author" content="Pusdatin Kemenag Barito Utara" />
     <meta name="publisher" content="Kantor Kementerian Agama Kabupaten Barito Utara" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="id-ID" href={canonicalUrl} />
+    <link rel="alternate" hreflang="x-default" href={canonicalUrl} />
+
+    <!-- Geo & Regional Metadata (Muara Teweh, Barito Utara, Kalteng) -->
+    <meta name="geo.region" content="ID-KT" />
+    <meta name="geo.placename" content="Muara Teweh, Barito Utara" />
+    <meta name="geo.position" content="-0.9575;114.8967" />
+    <meta name="ICBM" content="-0.9575, 114.8967" />
+    <meta name="coverage" content="Indonesia" />
+    <meta name="distribution" content="Global" />
+    <meta name="rating" content="General" />
 
     <!-- Adaptive Theme Color (Light & Dark System Mode) -->
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#064e3b" />
