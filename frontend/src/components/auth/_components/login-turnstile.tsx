@@ -92,6 +92,7 @@ export const LoginTurnstile = forwardRef<LoginTurnstileRef, LoginTurnstileProps>
         widgetIdRef.current = window.turnstile!.render(containerRef.current, {
           sitekey: siteKey,
           theme: "light",
+          size: "flexible",
           callback: (token: string) => handleToken(token),
           "expired-callback": () => handleToken(null),
           "error-callback": () => handleToken(null),
@@ -113,21 +114,21 @@ export const LoginTurnstile = forwardRef<LoginTurnstileRef, LoginTurnstileProps>
     }, [scriptLoaded, handleToken]);
 
     return (
-      <div className="flex flex-col items-center gap-1.5 w-full">
+      <div className="w-full">
         {label && (
-          <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">
+          <span className="block text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">
             {label}
           </span>
         )}
 
         {loading ? (
-          <div className="flex items-center justify-center h-[65px] w-full max-w-xs bg-slate-50 rounded-xl border border-slate-200 animate-pulse">
+          <div className="flex items-center justify-center h-[65px] w-full bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-200 animate-pulse">
             <Loader2 className="h-5 w-5 animate-spin text-slate-300" />
           </div>
         ) : (
           <div
             ref={containerRef}
-            className="origin-center scale-[0.85] sm:scale-100"
+            className="w-full [&>iframe]:!w-full [&>iframe]:!min-w-full"
           />
         )}
       </div>

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { apiClient } from "@/lib/api-client";
 import { loginSchema } from "@/lib/validations/auth";
-import { LoginTurnstile } from "@/components/auth/_components/login-turnstile";
+import { LoginTurnstile, type LoginTurnstileRef } from "@/components/auth/_components/login-turnstile";
 import { ErrorBoundary } from "@/components/auth/error-boundary";
 import { LoginBgMotion } from "@/components/auth/login-card";
 import { ParticleCanvas } from "@/components/auth/particle-canvas";
@@ -24,6 +24,7 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<LoginTurnstileRef>(null);
   const [rememberMe, setRememberMe] = useState(false);
   const mounted = true;
   const [error, setError] = useState("");
@@ -73,6 +74,8 @@ export function LoginPage() {
           const msg = authRes.error || "Gagal masuk. Periksa kembali email dan kata sandi.";
           setError(msg);
           toast.error(msg);
+          turnstileRef.current?.reset();
+          setTurnstileToken(null);
         } else {
           setError("");
           if (authRes.data && (authRes.data as { token?: string }).token) {
@@ -92,6 +95,8 @@ export function LoginPage() {
         const msg = err instanceof Error ? err.message : "Terjadi kesalahan";
         setError(msg);
         toast.error(msg);
+        turnstileRef.current?.reset();
+        setTurnstileToken(null);
       } finally {
         setLoading(false);
       }
@@ -341,10 +346,11 @@ export function LoginPage() {
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="flex w-full items-center justify-center py-1 origin-center scale-95 sm:scale-100"
+                className="w-full py-1"
               >
                 <ErrorBoundary>
                   <LoginTurnstile
+                    ref={turnstileRef}
                     mounted={mounted}
                     onTokenChange={setTurnstileToken}
                   />

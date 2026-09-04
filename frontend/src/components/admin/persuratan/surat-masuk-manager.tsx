@@ -93,7 +93,7 @@ export function SuratMasukManager({
     let ignore = false;
     async function loadFreshData() {
       try {
-        const res = await apiClient.suratMasuk.list(1, 100);
+        const res = await apiClient.suratMasuk.list(1, 1000);
         if (ignore) return;
         if (res.success && Array.isArray(res.data)) {
           setItems(res.data as SuratMasuk[]);
@@ -329,7 +329,7 @@ export function SuratMasukManager({
     setLoading(true);
     setFetchError(null);
     try {
-      const res = await apiClient.suratMasuk.list(1, 500);
+      const res = await apiClient.suratMasuk.list(1, 1000);
       if (res.success) {
         setItems((res.data ?? []) as SuratMasuk[]);
       } else {

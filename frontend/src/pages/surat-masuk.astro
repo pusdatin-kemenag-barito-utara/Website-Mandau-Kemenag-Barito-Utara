@@ -9,7 +9,7 @@ import {
 import { Inbox } from "lucide-react";
 
 const api = createApiClient(Astro.locals.authToken);
-const result = await api.suratMasuk.list(1, 100);
+const result = await api.suratMasuk.list(1, 1000);
 ---
 
 <AdminLayout

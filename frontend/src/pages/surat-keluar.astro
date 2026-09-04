@@ -10,7 +10,7 @@ import { Send } from "lucide-react";
 
 const api = createApiClient(Astro.locals.authToken);
 const [result, masterRes] = await Promise.all([
-  api.suratKeluar.list(1, 100),
+  api.suratKeluar.list(1, 1000),
   api.masterOptions.list(),
 ]);
 

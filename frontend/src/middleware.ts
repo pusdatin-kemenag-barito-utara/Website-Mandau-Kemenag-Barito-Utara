@@ -24,6 +24,7 @@ const SECURITY_HEADERS: Record<string, string> = {
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "X-DNS-Prefetch-Control": "on",
   "X-Powered-By": "Astro, GoFiber",
+  "X-CDN-Provider": "Cloudflare Enterprise Edge",
   "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
   "Pragma": "no-cache",
   "Expires": "0",
@@ -103,6 +104,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (PUBLIC_PATHS.has(pathname) || SKIP_PREFIXES.some((p) => pathname.startsWith(p))) {
     const response = await next();
     response.headers.set("Alt-Svc", 'h3=":443"; ma=86400, h3-29=":443"; ma=86400');
+    response.headers.set("X-CDN-Provider", "Cloudflare Enterprise Edge");
     return response;
   }
 

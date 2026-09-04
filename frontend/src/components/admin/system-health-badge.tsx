@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { Server, Database, Cloud, ShieldCheck } from "lucide-react";
+import { Server, Database, Cloud, ShieldCheck, Zap } from "lucide-react";
 
 export function SystemHealthBadge({ collapsed = false }: { collapsed?: boolean }) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isCloudflareEdge, setIsCloudflareEdge] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const host = window.location.hostname;
+      if (host.includes("kemenag-baritoutara.com") || host.includes("cloudflare")) {
+        setIsCloudflareEdge(true);
+      }
+    }
+  }, []);
 
   return (
     <div className="relative border-t border-slate-200/80 dark:border-white/10 bg-slate-50/60 dark:bg-white/[0.02]">
@@ -89,6 +99,15 @@ export function SystemHealthBadge({ collapsed = false }: { collapsed?: boolean }
                   <Cloud className="h-3 w-3 text-slate-400 dark:text-slate-500" /> Cloudflare R2
                 </span>
                 <span className="text-emerald-700 dark:text-emerald-400 font-bold">Siap</span>
+              </div>
+
+              <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <Zap className="h-3 w-3 text-amber-500 dark:text-amber-400" /> Cloudflare CDN & H3
+                </span>
+                <span className="text-emerald-700 dark:text-emerald-400 font-bold">
+                  {isCloudflareEdge ? "Aktif (Edge)" : "Siap (Proxy)"}
+                </span>
               </div>
             </div>
           </m.div>

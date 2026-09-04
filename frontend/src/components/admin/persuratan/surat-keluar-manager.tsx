@@ -100,7 +100,7 @@ export function SuratKeluarManager({
     let ignore = false;
     async function loadFreshData() {
       try {
-        const res = await apiClient.suratKeluar.list(1, 100);
+        const res = await apiClient.suratKeluar.list(1, 1000);
         if (ignore) return;
         if (res.success && Array.isArray(res.data)) {
           setItems(res.data as SuratKeluar[]);
@@ -219,7 +219,7 @@ export function SuratKeluarManager({
     setLoading(true);
     setFetchError(null);
     try {
-      const res = await apiClient.suratKeluar.list(1, 500);
+      const res = await apiClient.suratKeluar.list(1, 1000);
       if (res.success) {
         setItems((res.data ?? []) as SuratKeluar[]);
       } else {

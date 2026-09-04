@@ -3,9 +3,11 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -24,23 +26,44 @@ func verifyCloudflareTurnstile(token, clientIP string) bool {
 		return true // Skip verification if not set or local test
 	}
 
-	resp, err := http.PostForm("https://challenges.cloudflare.com/turnstile/v0/siteverify", url.Values{
+	formData := url.Values{
 		"secret":   {secretKey},
 		"response": {token},
-		"remoteip": {clientIP},
-	})
+	}
+
+	// Jangan kirim remoteip jika loopback (127.0.0.1 / ::1) atau private IP karena Cloudflare akan menolak dengan error "invalid-remoteip"
+	isLoopbackOrPrivate := clientIP == "" || clientIP == "127.0.0.1" || clientIP == "::1" ||
+		strings.HasPrefix(clientIP, "192.168.") || strings.HasPrefix(clientIP, "10.") || strings.HasPrefix(clientIP, "172.")
+	if !isLoopbackOrPrivate {
+		formData.Set("remoteip", clientIP)
+	}
+
+	resp, err := http.PostForm("https://challenges.cloudflare.com/turnstile/v0/siteverify", formData)
 	if err != nil {
-		return true
+		fmt.Printf("⚠️ Turnstile HTTP error: %v\n", err)
+		return true // Fail open on network error to avoid locking out users
 	}
 	defer resp.Body.Close()
 
 	var result struct {
-		Success bool `json:"success"`
+		Success    bool     `json:"success"`
+		ErrorCodes []string `json:"error-codes"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		fmt.Printf("⚠️ Turnstile JSON decode error: %v\n", err)
 		return true
 	}
-	return result.Success
+
+	if !result.Success {
+		fmt.Printf("❌ Turnstile verification failed: error-codes=%v (clientIP: %s, isLocal: %v)\n", result.ErrorCodes, clientIP, isLoopbackOrPrivate)
+		// Jika pengujian di localhost/development dan gagal karena domain/IP, izinkan agar tidak terblokir saat dev
+		if os.Getenv("GO_ENV") != "production" && (clientIP == "127.0.0.1" || clientIP == "::1") {
+			fmt.Println("ℹ️ Mengabaikan kegagalan Turnstile pada environment development / localhost")
+			return true
+		}
+		return false
+	}
+	return true
 }
 
 func Login(ctx context.Context, email, password, turnstileToken, clientIP string) (string, models.User, error) {
