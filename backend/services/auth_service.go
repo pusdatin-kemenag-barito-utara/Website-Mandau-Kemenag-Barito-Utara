@@ -51,7 +51,7 @@ func Login(ctx context.Context, email, password, turnstileToken, clientIP string
 		return "", models.User{}, ErrTurnstile
 	}
 
-	userID, encryptedPassword, err := repositories.GetUserCredentials(ctx, email)
+	userID, encryptedPassword, role, err := repositories.GetUserCredentials(ctx, email)
 	if err != nil {
 		go CreateAuditLog(context.Background(), email, "LOGIN_FAILED", "AUTH", email, clientIP, map[string]interface{}{
 			"status": "FAILED",
@@ -68,12 +68,12 @@ func Login(ctx context.Context, email, password, turnstileToken, clientIP string
 		return "", models.User{}, ErrInvalidCredentials
 	}
 
-	isSuper := email == os.Getenv("SUPER_ADMIN_EMAIL")
+	isSuper := role == "super_admin" || email == os.Getenv("SUPER_ADMIN_EMAIL")
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub":            userID,
 		"email":          email,
-		"role":           "admin",
+		"role":           role,
 		"is_super_admin": isSuper,
 		"exp":            time.Now().Add(7 * 24 * time.Hour).Unix(),
 	})
@@ -82,22 +82,26 @@ func Login(ctx context.Context, email, password, turnstileToken, clientIP string
 		return "", models.User{}, err
 	}
 
+	go func() {
+		_ = repositories.UpdateUserLastLogin(context.Background(), userID)
+	}()
+
 	go CreateAuditLog(context.Background(), email, "LOGIN_SUCCESS", "AUTH", email, clientIP, map[string]interface{}{
 		"status": "SUCCESS",
 	})
 
-	return tokenString, models.User{ID: userID, Email: email, IsSuper: isSuper}, nil
+	return tokenString, models.User{ID: userID, Email: email, Role: role, IsSuper: isSuper}, nil
 }
 
 func GetMe(ctx context.Context, email string) models.User {
 	user := models.User{
 		Email:   email,
-		Name:    "Admin",
-		Role:    "Admin Surat",
+		Name:    "Pengguna",
+		Role:    "admin",
 		IsSuper: email == os.Getenv("SUPER_ADMIN_EMAIL"),
 	}
 
-	name, role, avatar, err := repositories.GetUserProfile(ctx, email)
+	name, role, avatar, _, err := repositories.GetUserProfile(ctx, email)
 	if err == nil {
 		user.Name = name
 		user.Role = role

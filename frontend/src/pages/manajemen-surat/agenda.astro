@@ -1,0 +1,20 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { PageHeader } from "@/components/admin/page-header";
+import { Bookmark } from "lucide-react";
+import { AgendaSuratView } from "@/components/admin/manajemen-surat/agenda-surat-view";
+---
+
+<AdminLayout
+  title="Agenda Surat | SI MANDAU Kemenag Barito Utara"
+  description="Konfigurasi dan standarisasi jenis agenda naskah dinas resmi Kantor Kementerian Agama Kabupaten Barito Utara."
+>
+  <div class="space-y-4">
+    <PageHeader
+      title="Agenda Surat"
+      description="Kelola klasifikasi dan jenis agenda naskah dinas resmi pada sistem penatausahaan persuratan"
+      icon={Bookmark}
+    />
+    <AgendaSuratView client:load />
+  </div>
+</AdminLayout>

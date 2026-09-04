@@ -15,7 +15,7 @@ const [result, masterRes] = await Promise.all([
 ]);
 
 const rawMaster = (masterRes.data as MasterOptionRaw[]) || [];
-const agendaData = rawMaster.filter((m) => m.category === "agenda");
+const agendaData = rawMaster.filter((m) => m.category === "agenda" || m.category === "agenda_keluar");
 const unitKerjaData = rawMaster.filter((m) => m.category === "unit_kerja");
 
 const agendaOptions = agendaData.map((o) => o.name);

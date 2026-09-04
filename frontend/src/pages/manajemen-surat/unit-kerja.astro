@@ -1,0 +1,20 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { PageHeader } from "@/components/admin/page-header";
+import { Building2 } from "lucide-react";
+import { OpsiUnitKerjaView } from "@/components/admin/manajemen-surat/opsi-unit-kerja-view";
+---
+
+<AdminLayout
+  title="Opsi Unit Kerja | SI MANDAU Kemenag Barito Utara"
+  description="Konfigurasi daftar seksi dan unit kerja penerbit naskah dinas serta hak akses bidang Manajemen Pengguna."
+>
+  <div class="space-y-4">
+    <PageHeader
+      title="Unit Kerja / Seksi Penerbit"
+      description="Kelola daftar seksi penomoran naskah dinas dan pilihan bidang pada Manajemen Pengguna"
+      icon={Building2}
+    />
+    <OpsiUnitKerjaView client:load />
+  </div>
+</AdminLayout>

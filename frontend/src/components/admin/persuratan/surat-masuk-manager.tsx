@@ -65,9 +65,12 @@ export interface SuratMasuk {
 
 export function SuratMasukManager({
   initialData = [],
+  initialTotal = 0,
 }: {
   initialData?: SuratMasuk[];
   initialTotal?: number;
+  initialAgendaOptions?: string[];
+  agendaColors?: Record<string, string>;
 }) {
   const [items, setItems] = useState<SuratMasuk[]>(initialData);
   const [pdfViewerUrl, setPdfViewerUrl] = useState<string | null>(null);
@@ -135,7 +138,6 @@ export function SuratMasukManager({
       `🏢 *Asal Surat*: ${item.asal_surat}\n` +
       `📝 *Perihal*: ${item.perihal}\n` +
       `🏷️ *Status*: ${toTitleCase(item.status || 'published')}\n` +
-      (item.agenda ? `🗂️ *Kategori*: ${item.agenda}\n` : '') +
       (item.lampiran ? `📎 *Lampiran*: ${item.lampiran}\n` : '') +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
       `_Kantor Kementerian Agama Kabupaten Barito Utara_`;
@@ -271,7 +273,6 @@ export function SuratMasukManager({
     tanggal_terima: "",
     asal_surat: "",
     perihal: "",
-    agenda: "",
     status: "published",
     lampiran: "",
   });
@@ -346,7 +347,7 @@ export function SuratMasukManager({
     if (debouncedSearch.trim()) {
       const keywords = debouncedSearch.toLowerCase().trim().split(/\s+/);
       result = result.filter((item) => {
-        const fullText = `${item.nomor_surat} ${item.asal_surat} ${item.perihal} ${item.agenda || ""}`.toLowerCase();
+        const fullText = `${item.nomor_surat} ${item.asal_surat} ${item.perihal}`.toLowerCase();
         return keywords.every((kw) => fullText.includes(kw));
       });
     }
@@ -425,7 +426,6 @@ export function SuratMasukManager({
       tanggal_terima: "",
       asal_surat: "",
       perihal: "",
-      agenda: "",
       status: "published",
       lampiran: "",
     };
@@ -443,7 +443,6 @@ export function SuratMasukManager({
       tanggal_terima: item.tanggal_terima,
       asal_surat: item.asal_surat,
       perihal: item.perihal,
-      agenda: item.agenda || "",
       status: item.status || "published",
       lampiran: item.lampiran || "",
     };
@@ -463,7 +462,6 @@ export function SuratMasukManager({
       fd.set("tanggal_terima", formData.tanggal_terima);
       fd.set("asal_surat", formData.asal_surat);
       fd.set("perihal", formData.perihal);
-      fd.set("agenda", formData.agenda);
       fd.set("status", formData.status);
       if (lampiranFile) fd.set("lampiran_file", lampiranFile);
 
@@ -532,7 +530,6 @@ export function SuratMasukManager({
       "Tanggal Terima",
       "Asal Surat / Pengirim",
       "Perihal",
-      "Klasifikasi / Agenda",
       "Status",
     ];
 
@@ -543,7 +540,6 @@ export function SuratMasukManager({
       formatDate(item.tanggal_terima),
       item.asal_surat,
       item.perihal,
-      item.agenda || "-",
       item.status === "published" ? "Terbit" : item.status === "draft" ? "Konsep" : "Terbit",
     ]);
 
@@ -566,7 +562,6 @@ export function SuratMasukManager({
       { wch: 16 },  // Tanggal Terima
       { wch: 38 },  // Asal Surat
       { wch: 60 },  // Perihal
-      { wch: 24 },  // Agenda
       { wch: 14 },  // Status
     ];
 
@@ -892,13 +887,21 @@ export function SuratMasukManager({
                       <td className="px-4 py-4 text-xs font-semibold text-slate-600 dark:text-slate-300">
                         {formatDate(item.tanggal_terima)}
                       </td>
-                      <td className="px-4 py-4 max-w-xs sm:max-w-md">
-                        <p className="text-xs font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                          {item.asal_surat}
-                        </p>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5 leading-snug">
-                          {item.perihal}
-                        </p>
+                      <td className="px-4 py-4 max-w-[280px] sm:max-w-sm md:max-w-md">
+                        <div className="min-w-0">
+                          <p
+                            title={item.asal_surat}
+                            className="text-xs font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate"
+                          >
+                            {item.asal_surat}
+                          </p>
+                          <p
+                            title={item.perihal}
+                            className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug truncate"
+                          >
+                            {item.perihal}
+                          </p>
+                        </div>
                       </td>
                       <td className="px-4 py-4">
                         <StatusBadge status={item.status || "draft"} />
@@ -1176,17 +1179,7 @@ export function SuratMasukManager({
                     placeholder="Contoh: Kanwil Kemenag Prov. Kalteng"
                     value={formData.asal_surat}
                     onChange={(e) => {
-                      const val = e.target.value;
-                      setFormData({ ...formData, asal_surat: val });
-                    }}
-                    onBlur={(e) => {
-                      const val = e.target.value;
-                      if (val) {
-                        setFormData({
-                          ...formData,
-                          asal_surat: toTitleCase(val),
-                        });
-                      }
+                      setFormData({ ...formData, asal_surat: e.target.value });
                     }}
                   />
                 </div>
@@ -1424,7 +1417,7 @@ export function SuratMasukManager({
                       {detailItem.nomor_surat}
                     </p>
                   </div>
-                  <div className="shrink-0">
+                  <div className="shrink-0 flex items-center gap-2">
                     <StatusBadge status={detailItem.status || "published"} />
                   </div>
                 </div>

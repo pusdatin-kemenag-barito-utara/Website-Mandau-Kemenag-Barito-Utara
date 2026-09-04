@@ -28,10 +28,11 @@ func sanitizeFileName(name string) string {
 // A custom-domain R2_PUBLIC_URL wins; otherwise a same-origin path is returned
 // that works through the frontend /api/v1 proxy in both dev and production.
 func BuildLampiranPublicURL(key string) string {
+	cleanKey := strings.TrimLeft(key, "/")
 	if config.R2PublicURL != "" && !strings.Contains(config.R2PublicURL, "r2.dev") {
-		return fmt.Sprintf("%s/%s", strings.TrimRight(config.R2PublicURL, "/"), key)
+		return fmt.Sprintf("%s/%s", strings.TrimRight(config.R2PublicURL, "/"), cleanKey)
 	}
-	return fmt.Sprintf("/api/v1/lampiran/%s", key)
+	return fmt.Sprintf("https://files.kemenag-baritoutara.com/%s", cleanKey)
 }
 
 func UploadLampiran(ctx context.Context, fileHeader *multipart.FileHeader, prefix, suratID string) (string, error) {
@@ -85,16 +86,23 @@ func DeleteLampiran(ctx context.Context, rawURL string) error {
 	}
 
 	key := rawURL
-	if strings.HasPrefix(rawURL, "/api/v1/lampiran/") {
+	if strings.Contains(rawURL, "files.kemenag-baritoutara.com/") {
+		parts := strings.Split(rawURL, "files.kemenag-baritoutara.com/")
+		if len(parts) > 1 {
+			key = parts[1]
+		}
+	} else if strings.HasPrefix(rawURL, "/api/v1/lampiran/") {
 		key = strings.TrimPrefix(rawURL, "/api/v1/lampiran/")
-	} else if strings.HasPrefix(rawURL, config.R2PublicURL) {
-		key = strings.TrimPrefix(rawURL, config.R2PublicURL+"/")
+	} else if config.R2PublicURL != "" && strings.HasPrefix(rawURL, config.R2PublicURL) {
+		key = strings.TrimPrefix(rawURL, strings.TrimRight(config.R2PublicURL, "/")+"/")
 	} else if strings.Contains(rawURL, "/data-surat/") {
 		parts := strings.Split(rawURL, "/data-surat/")
 		if len(parts) > 1 {
 			key = parts[1]
 		}
 	}
+
+	key = strings.TrimLeft(key, "/")
 
 	if key == "" {
 		return nil

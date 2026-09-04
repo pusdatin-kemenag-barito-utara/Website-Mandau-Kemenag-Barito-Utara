@@ -792,10 +792,7 @@ export function SuratKeluarManager({
                     Tanggal
                   </th>
                   <th className="text-left px-4 py-3.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
-                    Agenda
-                  </th>
-                  <th className="text-left px-4 py-3.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
-                    Unit Kerja
+                    Agenda & Unit Kerja
                   </th>
                   <th className="text-center px-4 py-3.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
                     Status
@@ -812,7 +809,7 @@ export function SuratKeluarManager({
                 {paginated.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={8}
+                      colSpan={7}
                       className="px-4 py-16 text-center text-sm text-slate-400 font-semibold"
                     >
                       Belum ada data surat keluar
@@ -850,42 +847,58 @@ export function SuratKeluarManager({
                       <td className="px-4 py-4 text-xs font-semibold text-slate-600 dark:text-slate-300">
                         {formatDate(item.tanggal_surat)}
                       </td>
-                      <td className="px-4 py-4">
-                        <span
-                          className={`inline-flex px-2 py-1 text-[10px] font-bold rounded-lg border ${
-                            (agendaColors[item.agenda]
-                              ? BADGE_COLOR_MAP[agendaColors[item.agenda]]
-                              : null) ||
-                            "bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10"
-                          }`}
-                        >
-                          {item.agenda}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <span
-                          className={`inline-flex px-2 py-1 text-[10px] font-bold rounded-lg border ${
-                            (unitKerjaColors[item.unit_kerja]
-                              ? BADGE_COLOR_MAP[
-                                  unitKerjaColors[item.unit_kerja]
-                                ]
-                              : null) ||
-                            "bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10"
-                          }`}
-                        >
-                          {item.unit_kerja}
-                        </span>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-col items-start gap-1">
+                          {item.agenda ? (
+                            <span
+                              className={`inline-flex px-2 py-0.5 text-[10px] font-bold rounded-md border ${
+                                (agendaColors[item.agenda]
+                                  ? BADGE_COLOR_MAP[agendaColors[item.agenda]]
+                                  : null) ||
+                                "bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10"
+                              }`}
+                            >
+                              {item.agenda}
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 font-medium">-</span>
+                          )}
+                          {item.unit_kerja ? (
+                            <span
+                              className={`inline-flex px-2 py-0.5 text-[10px] font-bold rounded-md border ${
+                                (unitKerjaColors[item.unit_kerja]
+                                  ? BADGE_COLOR_MAP[
+                                      unitKerjaColors[item.unit_kerja]
+                                    ]
+                                  : null) ||
+                                "bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10"
+                              }`}
+                            >
+                              {item.unit_kerja}
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 font-medium">-</span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-4 text-center">
                         <StatusBadge status={item.status || "draft"} />
                       </td>
-                      <td className="px-4 py-4 max-w-xs sm:max-w-md">
-                        <p className="text-xs font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
-                          {item.tujuan_surat}
-                        </p>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5 leading-snug">
-                          {item.perihal}
-                        </p>
+                      <td className="px-4 py-4 max-w-[280px] sm:max-w-sm md:max-w-md">
+                        <div className="min-w-0">
+                          <p
+                            title={item.tujuan_surat}
+                            className="text-xs font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors truncate"
+                          >
+                            {item.tujuan_surat}
+                          </p>
+                          <p
+                            title={item.perihal}
+                            className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug truncate"
+                          >
+                            {item.perihal}
+                          </p>
+                        </div>
                       </td>
                       <td className="px-4 py-3.5">
                         <div className="flex items-center justify-center gap-1.5 p-1 rounded-xl w-fit mx-auto">
@@ -1187,15 +1200,6 @@ export function SuratKeluarManager({
                         ...formData,
                         tujuan_surat: e.target.value,
                       });
-                    }}
-                    onBlur={(e) => {
-                      const val = e.target.value;
-                      if (val) {
-                        setFormData({
-                          ...formData,
-                          tujuan_surat: toTitleCase(val),
-                        });
-                      }
                     }}
                   />
                 </div>

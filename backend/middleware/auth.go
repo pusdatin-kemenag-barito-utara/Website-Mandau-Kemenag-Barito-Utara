@@ -62,6 +62,23 @@ func AuthRequired(c fiber.Ctx) error {
 	c.Locals("userID", claims["sub"])
 	c.Locals("userEmail", claims["email"])
 	c.Locals("userRole", claims["role"])
+	if isSuper, ok := claims["is_super_admin"].(bool); ok {
+		c.Locals("isSuperAdmin", isSuper)
+	}
 
 	return c.Next()
+}
+
+func SuperAdminRequired(c fiber.Ctx) error {
+	role, _ := c.Locals("userRole").(string)
+	isSuper, _ := c.Locals("isSuperAdmin").(bool)
+
+	if role == "super_admin" || isSuper {
+		return c.Next()
+	}
+
+	return c.Status(fiber.StatusForbidden).JSON(models.APIResponse{
+		Success: false,
+		Error:   "Akses ditolak. Fitur ini hanya dapat dikelola oleh Super Admin.",
+	})
 }

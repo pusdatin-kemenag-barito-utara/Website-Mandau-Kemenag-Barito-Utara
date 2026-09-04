@@ -10,10 +10,10 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@astrojs/node": "^11.1.2",
-    "@astrojs/react": "^5.0.4",
+    "@astrojs/node": "^11.1.5",
+    "@astrojs/react": "^6.0.5",
     "@tailwindcss/vite": "^4",
-    "astro": "^7.2.2",
+    "astro": "^7.3.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "framer-motion": "^12.40.0",

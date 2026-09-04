@@ -63,6 +63,15 @@ func Setup(app *fiber.App) {
 
 	// Master Options Mutations
 	v1.Post("/master-options", auth, handlers.CreateMasterOptionHandler)
+	v1.Put("/master-options/reorder", auth, handlers.ReorderMasterOptionsHandler)
 	v1.Put("/master-options/:id", auth, handlers.UpdateMasterOptionHandler)
 	v1.Delete("/master-options/:id", auth, handlers.DeleteMasterOptionHandler)
+
+	// User Management Routes (Super Admin Only)
+	superAdmin := middleware.SuperAdminRequired
+	v1.Get("/users", auth, superAdmin, handlers.GetUsersHandler)
+	v1.Get("/users/:id", auth, superAdmin, handlers.GetUserDetailHandler)
+	v1.Post("/users", auth, superAdmin, handlers.CreateUserHandler)
+	v1.Put("/users/:id", auth, superAdmin, handlers.UpdateUserHandler)
+	v1.Delete("/users/:id", auth, superAdmin, handlers.DeleteUserHandler)
 }

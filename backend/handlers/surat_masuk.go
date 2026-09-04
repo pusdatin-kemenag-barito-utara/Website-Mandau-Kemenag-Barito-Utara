@@ -53,7 +53,7 @@ func CreateSuratMasukHandler(c fiber.Ctx) error {
 		TanggalTerima: c.FormValue("tanggal_terima"),
 		AsalSurat:     c.FormValue("asal_surat"),
 		Perihal:       c.FormValue("perihal"),
-		Agenda:        c.FormValue("agenda"),
+		Agenda:        "",
 		Status:        c.FormValue("status"),
 	}
 	if in.Status == "" {
@@ -99,7 +99,7 @@ func UpdateSuratMasukHandler(c fiber.Ctx) error {
 		TanggalTerima: c.FormValue("tanggal_terima"),
 		AsalSurat:     c.FormValue("asal_surat"),
 		Perihal:       c.FormValue("perihal"),
-		Agenda:        c.FormValue("agenda"),
+		Agenda:        "",
 		Status:        c.FormValue("status"),
 	}
 	in.LampiranFile, _ = c.FormFile("lampiran_file")

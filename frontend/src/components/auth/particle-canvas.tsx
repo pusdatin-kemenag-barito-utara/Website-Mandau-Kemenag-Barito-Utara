@@ -26,16 +26,28 @@ export function ParticleCanvas() {
     if (!ctx) return;
 
     let animationFrameId: number;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let width = 0;
+    let height = 0;
 
     const handleResize = () => {
       if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      const parent = canvas.parentElement;
+      const rect = parent ? parent.getBoundingClientRect() : canvas.getBoundingClientRect();
+      width = canvas.width = Math.floor(rect.width) || window.innerWidth;
+      height = canvas.height = Math.floor(rect.height) || window.innerHeight;
     };
 
+    handleResize();
+
     window.addEventListener("resize", handleResize, { passive: true });
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && canvas.parentElement) {
+      resizeObserver = new ResizeObserver(() => {
+        handleResize();
+      });
+      resizeObserver.observe(canvas.parentElement);
+    }
 
     let mouseX = width / 2;
     let mouseY = height / 2;
@@ -43,8 +55,10 @@ export function ParticleCanvas() {
     let targetMouseY = height / 2;
 
     const handleMouseMove = (e: MouseEvent) => {
-      targetMouseX = e.clientX;
-      targetMouseY = e.clientY;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      targetMouseX = e.clientX - rect.left;
+      targetMouseY = e.clientY - rect.top;
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
@@ -194,6 +208,9 @@ export function ParticleCanvas() {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       cancelAnimationFrame(animationFrameId);
     };
   }, []);

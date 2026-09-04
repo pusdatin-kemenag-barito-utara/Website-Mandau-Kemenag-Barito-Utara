@@ -61,7 +61,7 @@ func ListSuratMasuk(ctx context.Context, limit, offset int) ([]models.SuratMasuk
 func GetSuratMasukLampiran(ctx context.Context, id string) (string, error) {
 	var lampiran string
 	err := config.DB.QueryRow(ctx,
-		`SELECT COALESCE(lampiran, '') FROM kemenag_surat.surat_masuk WHERE external_id = $1`, id,
+		`SELECT COALESCE(lampiran, '') FROM kemenag_surat.surat_masuk WHERE external_id = $1 OR id::text = $1`, id,
 	).Scan(&lampiran)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return "", ErrNotFound
@@ -139,8 +139,8 @@ func CreateSuratMasuk(ctx context.Context, nomorSurat, tanggalSurat, tanggalTeri
 		INSERT INTO kemenag_surat.surat_masuk (
 			external_id, nomor_surat, tanggal_surat, tanggal_terima,
 			asal_surat, perihal, agenda, status, lampiran, created_by
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-	`, externalID, nomorSurat, tanggalSurat, tanggalTerima, asalSurat, perihal, agenda, status, lampiranURL, userID)
+		) VALUES ($1, $2, $3, $4, $5, $6, NULL, $7, $8, $9)
+	`, externalID, nomorSurat, tanggalSurat, tanggalTerima, asalSurat, perihal, status, lampiranURL, userID)
 	if err != nil {
 		return "", err
 	}
@@ -155,10 +155,12 @@ func UpdateSuratMasuk(ctx context.Context, id, nomorSurat, tanggalSurat, tanggal
 	tag, err := config.DB.Exec(ctx, `
 		UPDATE kemenag_surat.surat_masuk
 		SET nomor_surat = $1, tanggal_surat = $2, tanggal_terima = $3,
-		    asal_surat = $4, perihal = $5, agenda = $6, status = $7,
-		    lampiran = $8, updated_by = $9, updated_at = NOW()
-		WHERE external_id = $10
-	`, nomorSurat, tanggalSurat, tanggalTerima, asalSurat, perihal, agenda, status, lampiranURL, userID, id)
+		    asal_surat = $4, perihal = $5, agenda = NULL, status = $6,
+		    lampiran = $7,
+		    updated_by = CASE WHEN NULLIF($8, '') IS NOT NULL THEN $8::uuid ELSE updated_by END,
+		    updated_at = NOW()
+		WHERE external_id = $9 OR id::text = $9
+	`, nomorSurat, tanggalSurat, tanggalTerima, asalSurat, perihal, status, lampiranURL, userID, id)
 	if err != nil {
 		return err
 	}
@@ -169,22 +171,28 @@ func UpdateSuratMasuk(ctx context.Context, id, nomorSurat, tanggalSurat, tanggal
 }
 
 func DeleteSuratMasuk(ctx context.Context, id string) error {
-	_, err := config.DB.Exec(ctx, `DELETE FROM kemenag_surat.surat_masuk WHERE external_id = $1`, id)
+	_, err := config.DB.Exec(ctx, `DELETE FROM kemenag_surat.surat_masuk WHERE external_id = $1 OR id::text = $1`, id)
 	return err
 }
 
 func SetSuratMasukStatus(ctx context.Context, id, status, userID string) error {
 	_, err := config.DB.Exec(ctx, `
-		UPDATE kemenag_surat.surat_masuk SET status = $1, updated_by = $2, updated_at = NOW()
-		WHERE external_id = $3
+		UPDATE kemenag_surat.surat_masuk
+		SET status = $1,
+		    updated_by = CASE WHEN NULLIF($2, '') IS NOT NULL THEN $2::uuid ELSE updated_by END,
+		    updated_at = NOW()
+		WHERE external_id = $3 OR id::text = $3
 	`, status, userID, id)
 	return err
 }
 
 func ClearSuratMasukLampiran(ctx context.Context, id, userID string) error {
 	_, err := config.DB.Exec(ctx, `
-		UPDATE kemenag_surat.surat_masuk SET lampiran = '', updated_by = $1, updated_at = NOW()
-		WHERE external_id = $2
+		UPDATE kemenag_surat.surat_masuk
+		SET lampiran = '',
+		    updated_by = CASE WHEN NULLIF($1, '') IS NOT NULL THEN $1::uuid ELSE updated_by END,
+		    updated_at = NOW()
+		WHERE external_id = $2 OR id::text = $2
 	`, userID, id)
 	return err
 }
@@ -238,7 +246,7 @@ func ListSuratKeluar(ctx context.Context, limit, offset int) ([]models.SuratKelu
 func GetSuratKeluarLampiran(ctx context.Context, id string) (string, error) {
 	var lampiran string
 	err := config.DB.QueryRow(ctx,
-		`SELECT COALESCE(lampiran, '') FROM kemenag_surat.surat_keluar WHERE external_id = $1`, id,
+		`SELECT COALESCE(lampiran, '') FROM kemenag_surat.surat_keluar WHERE external_id = $1 OR id::text = $1`, id,
 	).Scan(&lampiran)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return "", ErrNotFound
@@ -330,8 +338,10 @@ func UpdateSuratKeluar(ctx context.Context, id, nomorSurat, tanggalSurat, tujuan
 		UPDATE kemenag_surat.surat_keluar
 		SET nomor_surat = $1, tanggal_surat = $2, tujuan_surat = $3,
 		    perihal = $4, agenda = $5, unit_kerja = $6, status = $7,
-		    lampiran = $8, updated_by = $9, updated_at = NOW()
-		WHERE external_id = $10
+		    lampiran = $8,
+		    updated_by = CASE WHEN NULLIF($9, '') IS NOT NULL THEN $9::uuid ELSE updated_by END,
+		    updated_at = NOW()
+		WHERE external_id = $10 OR id::text = $10
 	`, nomorSurat, tanggalSurat, tujuanSurat, perihal, agenda, unitKerja, status, lampiranURL, userID, id)
 	if err != nil {
 		return err
@@ -343,22 +353,28 @@ func UpdateSuratKeluar(ctx context.Context, id, nomorSurat, tanggalSurat, tujuan
 }
 
 func DeleteSuratKeluar(ctx context.Context, id string) error {
-	_, err := config.DB.Exec(ctx, `DELETE FROM kemenag_surat.surat_keluar WHERE external_id = $1`, id)
+	_, err := config.DB.Exec(ctx, `DELETE FROM kemenag_surat.surat_keluar WHERE external_id = $1 OR id::text = $1`, id)
 	return err
 }
 
 func SetSuratKeluarStatus(ctx context.Context, id, status, userID string) error {
 	_, err := config.DB.Exec(ctx, `
-		UPDATE kemenag_surat.surat_keluar SET status = $1, updated_by = $2, updated_at = NOW()
-		WHERE external_id = $3
+		UPDATE kemenag_surat.surat_keluar
+		SET status = $1,
+		    updated_by = CASE WHEN NULLIF($2, '') IS NOT NULL THEN $2::uuid ELSE updated_by END,
+		    updated_at = NOW()
+		WHERE external_id = $3 OR id::text = $3
 	`, status, userID, id)
 	return err
 }
 
 func ClearSuratKeluarLampiran(ctx context.Context, id, userID string) error {
 	_, err := config.DB.Exec(ctx, `
-		UPDATE kemenag_surat.surat_keluar SET lampiran = '', updated_by = $1, updated_at = NOW()
-		WHERE external_id = $2
+		UPDATE kemenag_surat.surat_keluar
+		SET lampiran = '',
+		    updated_by = CASE WHEN NULLIF($1, '') IS NOT NULL THEN $1::uuid ELSE updated_by END,
+		    updated_at = NOW()
+		WHERE external_id = $2 OR id::text = $2
 	`, userID, id)
 	return err
 }

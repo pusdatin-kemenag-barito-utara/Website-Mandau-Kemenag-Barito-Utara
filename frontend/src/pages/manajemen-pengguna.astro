@@ -1,0 +1,20 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { PageHeader } from "@/components/admin/page-header";
+import { UserCog } from "lucide-react";
+import { UserManagementManager } from "@/components/admin/manajemen-pengguna/user-management-manager";
+---
+
+<AdminLayout
+  title="Manajemen Pengguna | SI MANDAU Kemenag Barito Utara"
+  description="Kelola hak akses pengguna, admin tata naskah, dan admin bidang Kantor Kementerian Agama Kabupaten Barito Utara."
+>
+  <div class="space-y-4">
+    <PageHeader
+      title="Manajemen Pengguna"
+      description="Kelola akun pengguna, hak akses Super Admin, Admin Surat, dan Admin Bidang"
+      icon={UserCog}
+    />
+    <UserManagementManager client:load />
+  </div>
+</AdminLayout>

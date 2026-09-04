@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"e-surat-backend/pkg/response"
+	"e-surat-backend/repositories"
 	"e-surat-backend/services"
 
 	"github.com/gofiber/fiber/v3"
@@ -81,4 +82,23 @@ func DeleteMasterOptionHandler(c fiber.Ctx) error {
 		return response.Internal(c, "Gagal menghapus opsi master.")
 	}
 	return response.Message(c, "Opsi master berhasil dihapus.")
+}
+
+func ReorderMasterOptionsHandler(c fiber.Ctx) error {
+	var req struct {
+		Items []repositories.ReorderOptionItem `json:"items"`
+	}
+	if err := c.Bind().Body(&req); err != nil || len(req.Items) == 0 {
+		return response.BadRequest(c, "Data urutan tidak valid.")
+	}
+
+	userEmail, _ := c.Locals("userEmail").(string)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := services.ReorderMasterOptions(ctx, req.Items, userEmail, c.IP()); err != nil {
+		return response.Internal(c, "Gagal memperbarui urutan opsi.")
+	}
+	return response.Message(c, "Urutan opsi master berhasil diperbarui.")
 }

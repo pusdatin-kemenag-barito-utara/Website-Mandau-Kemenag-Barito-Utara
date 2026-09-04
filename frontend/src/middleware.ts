@@ -98,7 +98,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.authToken = token;
   context.locals.user = user;
 
-  if (pathname === "/manajemen-surat" && !isSuperAdmin(user)) {
+  if ((pathname.startsWith("/manajemen-surat") || pathname === "/manajemen-pengguna") && !isSuperAdmin(user)) {
     return context.redirect("/");
   }
 

@@ -104,6 +104,7 @@ func DeleteLampiranHandler(c fiber.Ctx) error {
 		err = repositories.ClearSuratKeluarLampiran(ctx, id, userID)
 	}
 	if err != nil {
+		fmt.Printf("❌ [DeleteLampiranHandler] DB Error: %v\n", err)
 		return response.Internal(c, "Gagal menghapus data lampiran dari database.")
 	}
 

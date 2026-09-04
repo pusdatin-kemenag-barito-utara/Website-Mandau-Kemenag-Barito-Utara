@@ -43,3 +43,13 @@ func DeleteMasterOption(ctx context.Context, id, userEmail, ip string) error {
 	CreateAuditLog(ctx, userEmail, "DELETE", "MASTER_OPTION", id, ip, nil)
 	return nil
 }
+
+func ReorderMasterOptions(ctx context.Context, items []repositories.ReorderOptionItem, userEmail, ip string) error {
+	if err := repositories.ReorderMasterOptions(ctx, items); err != nil {
+		return err
+	}
+	CreateAuditLog(ctx, userEmail, "REORDER", "MASTER_OPTION", "bulk", ip, map[string]interface{}{
+		"count": len(items),
+	})
+	return nil
+}

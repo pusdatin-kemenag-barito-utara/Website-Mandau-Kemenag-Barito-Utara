@@ -260,6 +260,52 @@ const jsonLd = {
           "font-sans rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 text-xs font-semibold backdrop-blur-xl",
       }}
     />
+    {/* A11y Sanitizer: Menghilangkan tabindex tidak valid pada elemen non-interaktif <section> (dari toast container sonner) */}
+    <script is:inline>
+      (function () {
+        function sanitizeSectionTabindex() {
+          var sections = document.querySelectorAll("section[tabindex]");
+          for (var i = 0; i < sections.length; i++) {
+            sections[i].removeAttribute("tabindex");
+          }
+        }
+        sanitizeSectionTabindex();
+        if (typeof MutationObserver !== "undefined") {
+          var observer = new MutationObserver(function (mutations) {
+            for (var i = 0; i < mutations.length; i++) {
+              var m = mutations[i];
+              if (m.type === "attributes" && m.attributeName === "tabindex") {
+                if (m.target && m.target.tagName === "SECTION" && m.target.hasAttribute("tabindex")) {
+                  m.target.removeAttribute("tabindex");
+                }
+              } else if (m.addedNodes) {
+                for (var j = 0; j < m.addedNodes.length; j++) {
+                  var node = m.addedNodes[j];
+                  if (node.nodeType === 1) {
+                    if (node.tagName === "SECTION" && node.hasAttribute("tabindex")) {
+                      node.removeAttribute("tabindex");
+                    }
+                    if (node.querySelectorAll) {
+                      var inner = node.querySelectorAll("section[tabindex]");
+                      for (var k = 0; k < inner.length; k++) {
+                        inner[k].removeAttribute("tabindex");
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          });
+          observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ["tabindex"],
+          });
+        }
+        document.addEventListener("astro:page-load", sanitizeSectionTabindex);
+      })();
+    </script>
     <MaintenanceBlocker client:load />
     <CloudflareAnalytics />
 

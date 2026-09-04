@@ -35,6 +35,40 @@ export interface AuthUser {
   isSuper?: boolean;
 }
 
+export interface UserAccount {
+  id: string;
+  name: string;
+  email: string;
+  role: "super_admin" | "admin" | "admin_bidang";
+  bidang: string;
+  avatar?: string;
+  phone?: string;
+  is_active: boolean;
+  last_login_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateUserPayload {
+  name: string;
+  email: string;
+  password: string;
+  role: "admin" | "admin_bidang";
+  bidang?: string;
+  phone?: string;
+  is_active?: boolean;
+}
+
+export interface UpdateUserPayload {
+  name: string;
+  email: string;
+  password?: string;
+  role: "super_admin" | "admin" | "admin_bidang";
+  bidang?: string;
+  phone?: string;
+  is_active?: boolean;
+}
+
 export function getAuthToken(): string | undefined {
   if (typeof window === "undefined") return undefined;
   return document.cookie
@@ -160,12 +194,39 @@ export function createApiClient(token?: string) {
           method: "PUT",
           body: JSON.stringify(data),
         }),
+      reorder: (items: { id: string; sort_order: number }[]) =>
+        call<unknown>("/master-options/reorder", {
+          method: "PUT",
+          body: JSON.stringify({ items }),
+        }),
       delete: (id: string | number) =>
         call<unknown>(`/master-options/${id}`, { method: "DELETE" }),
     },
     lampiran: {
       delete: (id: string, type: "masuk" | "keluar") =>
         call<unknown>(`/lampiran/${id}?type=${type}`, { method: "DELETE" }),
+    },
+    users: {
+      list: (search = "", role = "all") => {
+        const params = new URLSearchParams();
+        if (search) params.append("search", search);
+        if (role && role !== "all") params.append("role", role);
+        const query = params.toString() ? `?${params.toString()}` : "";
+        return call<UserAccount[]>(`/users${query}`);
+      },
+      get: (id: string) => call<UserAccount>(`/users/${id}`),
+      create: (data: CreateUserPayload) =>
+        call<UserAccount>("/users", {
+          method: "POST",
+          body: JSON.stringify(data),
+        }),
+      update: (id: string, data: UpdateUserPayload) =>
+        call<UserAccount>(`/users/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(data),
+        }),
+      delete: (id: string) =>
+        call<unknown>(`/users/${id}`, { method: "DELETE" }),
     },
   };
 }
