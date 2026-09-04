@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sync"
 	"time"
 
 	"e-surat-backend/config"
@@ -93,7 +94,40 @@ func Login(ctx context.Context, email, password, turnstileToken, clientIP string
 	return tokenString, models.User{ID: userID, Email: email, Role: role, IsSuper: isSuper}, nil
 }
 
+type cachedUserProfile struct {
+	user      models.User
+	expiresAt time.Time
+}
+
+var (
+	userProfileCache   = make(map[string]cachedUserProfile)
+	userProfileCacheMu sync.RWMutex
+)
+
+// InvalidateUserProfileCache evicts user cache on update/delete
+func InvalidateUserProfileCache(emails ...string) {
+	userProfileCacheMu.Lock()
+	defer userProfileCacheMu.Unlock()
+	if len(emails) > 0 {
+		for _, em := range emails {
+			if em != "" {
+				delete(userProfileCache, em)
+			}
+		}
+	} else {
+		userProfileCache = make(map[string]cachedUserProfile)
+	}
+}
+
 func GetMe(ctx context.Context, email string) models.User {
+	userProfileCacheMu.RLock()
+	if item, ok := userProfileCache[email]; ok && time.Now().Before(item.expiresAt) {
+		cached := item.user
+		userProfileCacheMu.RUnlock()
+		return cached
+	}
+	userProfileCacheMu.RUnlock()
+
 	user := models.User{
 		Email:   email,
 		Name:    "Pengguna",
@@ -110,5 +144,13 @@ func GetMe(ctx context.Context, email string) models.User {
 	if role == "super_admin" {
 		user.IsSuper = true
 	}
+
+	userProfileCacheMu.Lock()
+	userProfileCache[email] = cachedUserProfile{
+		user:      user,
+		expiresAt: time.Now().Add(2 * time.Minute),
+	}
+	userProfileCacheMu.Unlock()
+
 	return user
 }

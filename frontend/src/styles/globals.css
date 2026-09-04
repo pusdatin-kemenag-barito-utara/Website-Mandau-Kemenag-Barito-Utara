@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
+@import "sonner/dist/styles.css";
 
 :root {
   --background: #ffffff;
@@ -63,7 +64,7 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Sonner Toast Notification Styling */
+/* Sonner Toast Notification Styling — Enterprise Top-Right Notification System */
 [data-sonner-toaster] {
   position: fixed !important;
   top: 1.25rem !important;
@@ -72,27 +73,121 @@ input:-webkit-autofill:active {
   bottom: auto !important;
   z-index: 999999 !important;
   font-family: "Plus Jakarta Sans" !important;
+  pointer-events: none !important;
 }
 
 [data-sonner-toast] {
+  pointer-events: auto !important;
   border-radius: 1rem !important;
   padding: 0.85rem 1.15rem !important;
   font-size: 0.8125rem !important;
   font-weight: 600 !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-  max-width: 380px !important;
-  width: auto !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.15) !important;
+  min-width: 320px !important;
+  max-width: 420px !important;
   font-family: "Plus Jakarta Sans" !important;
+  backdrop-filter: blur(16px) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+[data-sonner-toast][data-mounted="true"],
+[data-sonner-toast][data-visible="true"] {
+  opacity: 1 !important;
+}
+
+[data-sonner-toast] [data-content] {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  flex: 1 !important;
 }
 
 [data-sonner-toast][data-type="success"] {
   background: #064e3b !important;
   color: #ffffff !important;
-  border: 1px solid rgba(52, 211, 153, 0.4) !important;
+  border: 1px solid rgba(52, 211, 153, 0.45) !important;
+}
+[data-sonner-toast][data-type="success"] [data-title] {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.825rem !important;
+}
+[data-sonner-toast][data-type="success"] [data-description] {
+  color: #a7f3d0 !important;
+  font-weight: 500 !important;
+  font-size: 0.75rem !important;
+}
+[data-sonner-toast][data-type="success"] [data-icon] svg {
+  color: #34d399 !important;
+  fill: #34d399 !important;
 }
 
 [data-sonner-toast][data-type="error"] {
   background: #881337 !important;
   color: #ffffff !important;
-  border: 1px solid rgba(244, 63, 94, 0.4) !important;
+  border: 1px solid rgba(244, 63, 94, 0.45) !important;
 }
+[data-sonner-toast][data-type="error"] [data-title] {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.825rem !important;
+}
+[data-sonner-toast][data-type="error"] [data-description] {
+  color: #fecdd3 !important;
+  font-weight: 500 !important;
+  font-size: 0.75rem !important;
+}
+[data-sonner-toast][data-type="error"] [data-icon] svg {
+  color: #fb7185 !important;
+  fill: #fb7185 !important;
+}
+
+[data-sonner-toast][data-type="info"] {
+  background: #0c4a6e !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(56, 189, 248, 0.45) !important;
+}
+[data-sonner-toast][data-type="info"] [data-title] {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.825rem !important;
+}
+[data-sonner-toast][data-type="info"] [data-description] {
+  color: #bae6fd !important;
+  font-weight: 500 !important;
+  font-size: 0.75rem !important;
+}
+[data-sonner-toast][data-type="info"] [data-icon] svg {
+  color: #38bdf8 !important;
+  fill: #38bdf8 !important;
+}
+
+[data-sonner-toast][data-type="warning"] {
+  background: #78350f !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(251, 191, 36, 0.45) !important;
+}
+[data-sonner-toast][data-type="warning"] [data-title] {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.825rem !important;
+}
+[data-sonner-toast][data-type="warning"] [data-description] {
+  color: #fde68a !important;
+  font-weight: 500 !important;
+  font-size: 0.75rem !important;
+}
+[data-sonner-toast][data-type="warning"] [data-icon] svg {
+  color: #fbbf24 !important;
+  fill: #fbbf24 !important;
+}
+
+[data-sonner-toast] [data-close-button] {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 9999px !important;
+}
+

@@ -16,7 +16,7 @@ import {
 import { apiClient, type MasterOptionRaw } from "@/lib/api-client";
 import { COLOR_SWATCHES, COLOR_MAP, BADGE_COLOR_MAP } from "@/lib/constants";
 import { m, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FramerProvider } from "@/components/providers/framer-provider";
 
@@ -275,7 +275,10 @@ export function MasterSectionCard({
   };
 
   const handleSubmit = async () => {
-    if (!label.trim()) return;
+    if (!label.trim()) {
+      toast.error("Nama opsi wajib diisi!");
+      return;
+    }
     setSubmitting(true);
     try {
       if (editingItem) {
@@ -286,7 +289,9 @@ export function MasterSectionCard({
           sort_order: editingItem.sortOrder,
         });
         if (res.success) {
-          toast.success(res.message || "Opsi berhasil diperbarui");
+          toast.success("Opsi berhasil diperbarui", {
+            description: label.trim(),
+          });
           setShowForm(false);
           loadData();
         } else {
@@ -300,7 +305,9 @@ export function MasterSectionCard({
           sort_order: items.length + 1,
         });
         if (res.success) {
-          toast.success(res.message || "Opsi berhasil ditambahkan");
+          toast.success("Opsi baru berhasil ditambahkan", {
+            description: label.trim(),
+          });
           setShowForm(false);
           loadData();
         } else {
@@ -308,7 +315,7 @@ export function MasterSectionCard({
         }
       }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan");
+      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan sistem saat menyimpan");
     } finally {
       setSubmitting(false);
     }
@@ -318,9 +325,12 @@ export function MasterSectionCard({
     if (!deletingId) return;
     setSubmitting(true);
     try {
+      const targetItem = items.find((it) => it.id === deletingId);
       const res = await apiClient.masterOptions.delete(deletingId);
       if (res.success) {
-        toast.success(res.message || "Opsi berhasil dihapus");
+        toast.success("Opsi berhasil dihapus dari sistem", {
+          description: targetItem?.label ? `Opsi: ${targetItem.label}` : undefined,
+        });
         setShowDeleteConfirm(false);
         setDeletingId(null);
         loadData();
@@ -328,7 +338,7 @@ export function MasterSectionCard({
         toast.error(res.error || "Gagal menghapus opsi");
       }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan");
+      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan sistem saat menghapus");
     } finally {
       setSubmitting(false);
     }

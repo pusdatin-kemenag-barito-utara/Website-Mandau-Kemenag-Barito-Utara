@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"mime/multipart"
+	"sync"
 
 	"e-surat-backend/models"
 	"e-surat-backend/repositories"
@@ -41,13 +42,31 @@ type SuratKeluarInput struct {
 
 func ListSuratMasuk(ctx context.Context, page, pageSize int) ([]models.SuratMasuk, int, error) {
 	offset := (page - 1) * pageSize
-	list, err := repositories.ListSuratMasuk(ctx, pageSize, offset)
-	if err != nil {
-		return nil, 0, err
+
+	var (
+		wg       sync.WaitGroup
+		list     []models.SuratMasuk
+		listErr  error
+		total    int
+		countErr error
+	)
+
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		list, listErr = repositories.ListSuratMasuk(ctx, pageSize, offset)
+	}()
+	go func() {
+		defer wg.Done()
+		total, countErr = repositories.CountSuratMasuk(ctx)
+	}()
+	wg.Wait()
+
+	if listErr != nil {
+		return nil, 0, listErr
 	}
-	total, err := repositories.CountSuratMasuk(ctx)
-	if err != nil {
-		return nil, 0, err
+	if countErr != nil {
+		return nil, 0, countErr
 	}
 	return list, total, nil
 }
@@ -141,13 +160,31 @@ func ArchiveSuratMasuk(ctx context.Context, id string, isArchived bool, userID, 
 
 func ListSuratKeluar(ctx context.Context, page, pageSize int) ([]models.SuratKeluar, int, error) {
 	offset := (page - 1) * pageSize
-	list, err := repositories.ListSuratKeluar(ctx, pageSize, offset)
-	if err != nil {
-		return nil, 0, err
+
+	var (
+		wg       sync.WaitGroup
+		list     []models.SuratKeluar
+		listErr  error
+		total    int
+		countErr error
+	)
+
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		list, listErr = repositories.ListSuratKeluar(ctx, pageSize, offset)
+	}()
+	go func() {
+		defer wg.Done()
+		total, countErr = repositories.CountSuratKeluar(ctx)
+	}()
+	wg.Wait()
+
+	if listErr != nil {
+		return nil, 0, listErr
 	}
-	total, err := repositories.CountSuratKeluar(ctx)
-	if err != nil {
-		return nil, 0, err
+	if countErr != nil {
+		return nil, 0, countErr
 	}
 	return list, total, nil
 }

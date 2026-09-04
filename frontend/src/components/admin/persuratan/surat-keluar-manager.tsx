@@ -37,7 +37,7 @@ import { ModernDatePicker } from "@/components/ui/modern-date-picker";
 import { ModernSelect } from "@/components/ui/modern-select";
 import { m, AnimatePresence } from "framer-motion";
 import { toTitleCase } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { STATUS_OPTIONS } from "@/lib/constants";
 import { StatusBadge } from "@/components/ui/badge";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -95,10 +95,12 @@ export function SuratKeluarManager({
   }, [search]);
 
   useEffect(() => {
+    // Skip duplicate fetch on initial mount if data was already provided by SSR
+    if (initialData && initialData.length > 0) return;
     let ignore = false;
     async function loadFreshData() {
       try {
-        const res = await apiClient.suratKeluar.list(1, 5000);
+        const res = await apiClient.suratKeluar.list(1, 100);
         if (ignore) return;
         if (res.success && Array.isArray(res.data)) {
           setItems(res.data as SuratKeluar[]);
@@ -111,7 +113,7 @@ export function SuratKeluarManager({
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [initialData]);
 
   const [filterStartDate, setFilterStartDate] = useState("");
   const [filterEndDate, setFilterEndDate] = useState("");
@@ -217,7 +219,7 @@ export function SuratKeluarManager({
     setLoading(true);
     setFetchError(null);
     try {
-      const res = await apiClient.suratKeluar.list(1, 10000);
+      const res = await apiClient.suratKeluar.list(1, 500);
       if (res.success) {
         setItems((res.data ?? []) as SuratKeluar[]);
       } else {
@@ -354,29 +356,56 @@ export function SuratKeluarManager({
   };
 
   const handleSubmit = async () => {
+    // Client-side validation with immediate toast feedback
+    if (!formData.nomor_surat.trim()) {
+      toast.error("Nomor surat keluar wajib diisi!");
+      return;
+    }
+    if (!formData.tanggal_surat) {
+      toast.error("Tanggal surat dinas wajib dipilih!");
+      return;
+    }
+    if (!formData.tujuan_surat.trim()) {
+      toast.error("Tujuan penerima surat dinas wajib diisi!");
+      return;
+    }
+    if (!formData.perihal.trim()) {
+      toast.error("Perihal surat dinas wajib diisi!");
+      return;
+    }
+
     setSubmitting(true);
+    const isEdit = !!editingId;
     try {
       const fd = new FormData();
       if (editingId) fd.set("id", editingId);
-      fd.set("nomor_surat", formData.nomor_surat);
+      fd.set("nomor_surat", formData.nomor_surat.trim());
       fd.set("tanggal_surat", formData.tanggal_surat);
-      fd.set("tujuan_surat", formData.tujuan_surat);
-      fd.set("perihal", formData.perihal);
+      fd.set("tujuan_surat", formData.tujuan_surat.trim());
+      fd.set("perihal", formData.perihal.trim());
       fd.set("agenda", formData.agenda);
       fd.set("unit_kerja", formData.unit_kerja);
       fd.set("status", formData.status);
       if (lampiranFile) fd.set("lampiran_file", lampiranFile);
 
-      const res = await apiClient.suratKeluar.save(fd, !!editingId, editingId || undefined);
+      const res = await apiClient.suratKeluar.save(fd, isEdit, editingId || undefined);
       if (res.success) {
-        toast.success(res.message || "Berhasil disimpan");
+        if (isEdit) {
+          toast.success("Data surat keluar berhasil diperbarui", {
+            description: formData.nomor_surat ? `Nomor: ${formData.nomor_surat.trim()}` : undefined,
+          });
+        } else {
+          toast.success("Surat keluar baru berhasil dicatat", {
+            description: formData.nomor_surat ? `Nomor: ${formData.nomor_surat.trim()}` : undefined,
+          });
+        }
         setShowForm(false);
         fetchData();
       } else {
-        toast.error(res.error || "Gagal menyimpan");
+        toast.error(res.error || (isEdit ? "Gagal memperbarui surat keluar" : "Gagal mencatat surat keluar"));
       }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan");
+      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan sistem saat menyimpan data");
     } finally {
       setSubmitting(false);
     }
@@ -386,17 +415,20 @@ export function SuratKeluarManager({
     if (!deletingId) return;
     setSubmitting(true);
     try {
+      const targetItem = items.find((it) => it.id === deletingId);
       const res = await apiClient.suratKeluar.delete(deletingId);
       if (res.success) {
-        toast.success(res.message || "Berhasil dihapus");
+        toast.success("Surat keluar berhasil dihapus dari sistem", {
+          description: targetItem?.nomor_surat ? `Nomor: ${targetItem.nomor_surat}` : undefined,
+        });
         setShowDeleteConfirm(false);
         setDeletingId(null);
         fetchData();
       } else {
-        toast.error(res.error || "Gagal menghapus");
+        toast.error(res.error || "Gagal menghapus data surat keluar");
       }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan");
+      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan sistem saat menghapus data");
     } finally {
       setSubmitting(false);
     }
@@ -404,15 +436,23 @@ export function SuratKeluarManager({
 
   const handleArchive = async (id: string, isCurrentlyArchived: boolean) => {
     try {
+      const targetItem = items.find((it) => it.id === id);
       const res = await apiClient.suratKeluar.archive(id, !isCurrentlyArchived);
       if (res.success) {
-        toast.success(res.message || "Status arsip diperbarui");
+        toast.success(
+          !isCurrentlyArchived
+            ? "Surat keluar berhasil dipindahkan ke arsip"
+            : "Surat keluar berhasil dikembalikan dari arsip",
+          {
+            description: targetItem?.nomor_surat ? `Nomor: ${targetItem.nomor_surat}` : undefined,
+          }
+        );
         fetchData();
       } else {
-        toast.error(res.error || "Gagal mengarsipkan");
+        toast.error(res.error || "Gagal memperbarui status arsip");
       }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan");
+      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan sistem");
     }
   };
 

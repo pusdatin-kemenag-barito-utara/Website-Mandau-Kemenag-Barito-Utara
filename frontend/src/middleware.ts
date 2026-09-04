@@ -31,7 +31,7 @@ const SECURITY_HEADERS: Record<string, string> = {
   "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), display-capture=()",
   "X-XSS-Protection": "1; mode=block",
   "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
-  "Link": "<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, </mandau.png>; rel=preload; as=image; fetchpriority=high",
+  "Link": "<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://files.kemenag-baritoutara.com>; rel=preconnect; crossorigin, </mandau.png>; rel=preload; as=image; fetchpriority=high",
   "Content-Security-Policy": [
     "default-src 'self'",
     "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://*.cloudflareinsights.com https://www.googletagmanager.com https://*.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com",
@@ -72,6 +72,28 @@ async function fetchCurrentUser(token: string): Promise<AuthUser | null> {
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = new URL(context.request.url);
 
+  // 1. Enterprise Edge CDN Caching for Vite Bundles
+  if (pathname.startsWith("/_astro/")) {
+    const response = await next();
+    response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
+    response.headers.set("Alt-Svc", 'h3=":443"; ma=86400, h3-29=":443"; ma=86400');
+    return response;
+  }
+
+  // 2. Enterprise Edge CDN Caching for Static Public Assets
+  if (
+    pathname === "/mandau.png" ||
+    pathname === "/kemenag.svg" ||
+    pathname === "/pdf.worker.min.mjs" ||
+    pathname === "/favicon.ico" ||
+    pathname === "/manifest.json"
+  ) {
+    const response = await next();
+    response.headers.set("Cache-Control", "public, max-age=86400, stale-while-revalidate=604800");
+    response.headers.set("Alt-Svc", 'h3=":443"; ma=86400, h3-29=":443"; ma=86400');
+    return response;
+  }
+
   // Jika sistem sedang dalam mode maintenance dari Pusdatin, langsung arahkan ke /maintenance
   const isMaintenanceActive = context.cookies.get("sys_maintenance")?.value === "true";
   if (isMaintenanceActive && pathname !== "/maintenance" && !SKIP_PREFIXES.some((p) => pathname.startsWith(p))) {
@@ -79,7 +101,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   if (PUBLIC_PATHS.has(pathname) || SKIP_PREFIXES.some((p) => pathname.startsWith(p))) {
-    return next();
+    const response = await next();
+    response.headers.set("Alt-Svc", 'h3=":443"; ma=86400, h3-29=":443"; ma=86400');
+    return response;
   }
 
   const token = context.cookies.get(AUTH_COOKIE)?.value;

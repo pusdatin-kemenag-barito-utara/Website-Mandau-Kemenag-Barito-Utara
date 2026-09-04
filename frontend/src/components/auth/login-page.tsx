@@ -14,7 +14,7 @@ import {
   ArrowRight,
   Building2,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { m, AnimatePresence } from "framer-motion";
 import { FramerProvider } from "@/components/providers/framer-provider";
 

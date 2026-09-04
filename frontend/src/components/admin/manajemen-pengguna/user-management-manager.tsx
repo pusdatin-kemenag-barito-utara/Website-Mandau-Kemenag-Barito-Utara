@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { apiClient, type MasterOptionRaw } from "@/lib/api-client";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { FramerProvider } from "@/components/providers/framer-provider";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import type { UserAccount, UserFormData, UserStats } from "./types";
 import { UserStatsCards } from "./user-stats-cards";
 import { UserTable } from "./user-table";
@@ -169,7 +169,9 @@ export function UserManagementManager() {
         });
 
         if (res.success && res.data) {
-          toast.success("Pengguna baru berhasil ditambahkan.");
+          toast.success("Pengguna baru berhasil ditambahkan", {
+            description: `${formData.name.trim()} (${formData.email.trim()})`,
+          });
           setIsModalOpen(false);
           loadUsers();
         } else {
@@ -187,7 +189,9 @@ export function UserManagementManager() {
         });
 
         if (res.success && res.data) {
-          toast.success("Data pengguna berhasil diperbarui.");
+          toast.success("Data pengguna berhasil diperbarui", {
+            description: `${formData.name.trim()} (${formData.email.trim()})`,
+          });
           setIsModalOpen(false);
           loadUsers();
         } else {
@@ -209,7 +213,9 @@ export function UserManagementManager() {
     try {
       const res = await apiClient.users.delete(userToDelete.id);
       if (res.success) {
-        toast.success(`Pengguna ${userToDelete.name} berhasil dihapus.`);
+        toast.success("Pengguna berhasil dihapus dari sistem", {
+          description: `${userToDelete.name} (${userToDelete.email})`,
+        });
         setIsDeleteOpen(false);
         setUserToDelete(null);
         loadUsers();

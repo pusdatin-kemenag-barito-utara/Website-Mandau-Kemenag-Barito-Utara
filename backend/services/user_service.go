@@ -143,6 +143,9 @@ func UpdateUser(ctx context.Context, id string, req *models.UpdateUserRequest) (
 	if errors.Is(err, repositories.ErrDuplicate) {
 		return nil, ErrDuplicateEmail
 	}
+	if err == nil {
+		InvalidateUserProfileCache(existing.Email, req.Email)
+	}
 	return u, err
 }
 
@@ -162,6 +165,9 @@ func DeleteUser(ctx context.Context, id string) error {
 	err = repositories.DeleteUser(ctx, id)
 	if errors.Is(err, repositories.ErrNotFound) {
 		return ErrUserNotFound
+	}
+	if err == nil {
+		InvalidateUserProfileCache(existing.Email)
 	}
 	return err
 }

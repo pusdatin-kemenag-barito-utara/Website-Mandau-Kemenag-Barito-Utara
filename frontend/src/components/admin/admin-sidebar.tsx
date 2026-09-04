@@ -194,7 +194,7 @@ export function AdminSidebar({
                   <a
                     key={item.href}
                     href={item.href}
-                    data-astro-prefetch="hover"
+                    data-astro-prefetch="tap"
                     onClick={onLinkClick}
                     className={`group relative flex items-center py-2.5 rounded-xl text-[12.5px] transition-all duration-150 ${
                       collapsed ? "justify-center px-0" : "gap-3 px-3"

@@ -43,6 +43,7 @@ export const ALL: APIRoute = async ({ request, params }) => {
   try {
     const res = await fetch(target, { method, headers, body });
     const responseHeaders = new Headers();
+    responseHeaders.set("Alt-Svc", 'h3=":443"; ma=86400, h3-29=":443"; ma=86400');
     const contentType = res.headers.get("content-type");
     if (contentType) responseHeaders.set("content-type", contentType);
     const setCookie = res.headers.get("set-cookie");

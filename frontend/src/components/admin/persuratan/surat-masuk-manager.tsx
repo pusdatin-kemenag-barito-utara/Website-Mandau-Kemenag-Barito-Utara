@@ -37,7 +37,7 @@ import { ModernDatePicker } from "@/components/ui/modern-date-picker";
 import { m, AnimatePresence } from "framer-motion";
 import { ModernSelect } from "@/components/ui/modern-select";
 import { toTitleCase } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { STATUS_OPTIONS } from "@/lib/constants";
 import { StatusBadge } from "@/components/ui/badge";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -88,10 +88,12 @@ export function SuratMasukManager({
   }, [search]);
 
   useEffect(() => {
+    // Skip duplicate fetch on initial mount if data was already provided by SSR
+    if (initialData && initialData.length > 0) return;
     let ignore = false;
     async function loadFreshData() {
       try {
-        const res = await apiClient.suratMasuk.list(1, 5000);
+        const res = await apiClient.suratMasuk.list(1, 100);
         if (ignore) return;
         if (res.success && Array.isArray(res.data)) {
           setItems(res.data as SuratMasuk[]);
@@ -104,7 +106,7 @@ export function SuratMasukManager({
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [initialData]);
 
   const [filterSuratStart, setFilterSuratStart] = useState("");
   const [filterSuratEnd, setFilterSuratEnd] = useState("");
@@ -327,7 +329,7 @@ export function SuratMasukManager({
     setLoading(true);
     setFetchError(null);
     try {
-      const res = await apiClient.suratMasuk.list(1, 10000);
+      const res = await apiClient.suratMasuk.list(1, 500);
       if (res.success) {
         setItems((res.data ?? []) as SuratMasuk[]);
       } else {
@@ -453,28 +455,59 @@ export function SuratMasukManager({
   };
 
   const handleSubmit = async () => {
+    // Client-side validation with immediate toast feedback
+    if (!formData.nomor_surat.trim()) {
+      toast.error("Nomor surat wajib diisi!");
+      return;
+    }
+    if (!formData.tanggal_surat) {
+      toast.error("Tanggal surat dinas wajib dipilih!");
+      return;
+    }
+    if (!formData.tanggal_terima) {
+      toast.error("Tanggal terima naskah wajib dipilih!");
+      return;
+    }
+    if (!formData.asal_surat.trim()) {
+      toast.error("Asal instansi / pengirim surat wajib diisi!");
+      return;
+    }
+    if (!formData.perihal.trim()) {
+      toast.error("Perihal surat wajib diisi!");
+      return;
+    }
+
     setSubmitting(true);
+    const isEdit = !!editingId;
     try {
       const fd = new FormData();
       if (editingId) fd.set("id", editingId);
-      fd.set("nomor_surat", formData.nomor_surat);
+      fd.set("nomor_surat", formData.nomor_surat.trim());
       fd.set("tanggal_surat", formData.tanggal_surat);
       fd.set("tanggal_terima", formData.tanggal_terima);
-      fd.set("asal_surat", formData.asal_surat);
-      fd.set("perihal", formData.perihal);
+      fd.set("asal_surat", formData.asal_surat.trim());
+      fd.set("perihal", formData.perihal.trim());
       fd.set("status", formData.status);
       if (lampiranFile) fd.set("lampiran_file", lampiranFile);
 
-      const res = await apiClient.suratMasuk.save(fd, !!editingId, editingId || undefined);
+      const res = await apiClient.suratMasuk.save(fd, isEdit, editingId || undefined);
       if (res.success) {
-        toast.success(res.message || "Berhasil disimpan");
+        if (isEdit) {
+          toast.success("Data surat masuk berhasil diperbarui", {
+            description: formData.nomor_surat ? `Nomor: ${formData.nomor_surat.trim()}` : undefined,
+          });
+        } else {
+          toast.success("Surat masuk baru berhasil dicatat", {
+            description: formData.nomor_surat ? `Nomor: ${formData.nomor_surat.trim()}` : undefined,
+          });
+        }
         setShowForm(false);
         fetchData();
       } else {
-        toast.error(res.error || "Gagal menyimpan");
+        toast.error(res.error || (isEdit ? "Gagal memperbarui surat masuk" : "Gagal mencatat surat masuk"));
       }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan");
+      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan sistem saat menyimpan data");
     } finally {
       setSubmitting(false);
     }
@@ -484,17 +517,20 @@ export function SuratMasukManager({
     if (!deletingId) return;
     setSubmitting(true);
     try {
+      const targetItem = items.find((it) => it.id === deletingId);
       const res = await apiClient.suratMasuk.delete(deletingId);
       if (res.success) {
-        toast.success(res.message || "Berhasil dihapus");
+        toast.success("Surat masuk berhasil dihapus dari sistem", {
+          description: targetItem?.nomor_surat ? `Nomor: ${targetItem.nomor_surat}` : undefined,
+        });
         setShowDeleteConfirm(false);
         setDeletingId(null);
         fetchData();
       } else {
-        toast.error(res.error || "Gagal menghapus");
+        toast.error(res.error || "Gagal menghapus data surat masuk");
       }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan");
+      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan sistem saat menghapus data");
     } finally {
       setSubmitting(false);
     }
@@ -502,15 +538,23 @@ export function SuratMasukManager({
 
   const handleArchive = async (id: string, isCurrentlyArchived: boolean) => {
     try {
+      const targetItem = items.find((it) => it.id === id);
       const res = await apiClient.suratMasuk.archive(id, !isCurrentlyArchived);
       if (res.success) {
-        toast.success(res.message || "Status arsip diperbarui");
+        toast.success(
+          !isCurrentlyArchived
+            ? "Surat masuk berhasil dipindahkan ke arsip"
+            : "Surat masuk berhasil dikembalikan dari arsip",
+          {
+            description: targetItem?.nomor_surat ? `Nomor: ${targetItem.nomor_surat}` : undefined,
+          }
+        );
         fetchData();
       } else {
-        toast.error(res.error || "Gagal mengarsipkan");
+        toast.error(res.error || "Gagal memperbarui status arsip");
       }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan");
+      toast.error(e instanceof Error ? e.message : "Terjadi kesalahan sistem");
     }
   };
 

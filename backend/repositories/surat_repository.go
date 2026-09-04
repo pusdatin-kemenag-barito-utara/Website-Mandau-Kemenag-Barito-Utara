@@ -31,11 +31,11 @@ func CountSuratMasukBulanIni(ctx context.Context) (int, error) {
 
 func ListSuratMasuk(ctx context.Context, limit, offset int) ([]models.SuratMasuk, error) {
 	rows, err := config.DB.Query(ctx, `
-		SELECT external_id, nomor_surat, tanggal_surat::text, tanggal_terima::text,
-		       asal_surat, perihal, COALESCE(agenda, ''), COALESCE(status, 'published'),
-		       COALESCE(lampiran, ''), created_at, updated_at
-		FROM kemenag_surat.surat_masuk
-		ORDER BY tanggal_terima DESC, created_at DESC
+		SELECT sm.external_id, sm.nomor_surat, sm.tanggal_surat::text, sm.tanggal_terima::text,
+		       sm.asal_surat, sm.perihal, COALESCE(sm.agenda, ''), COALESCE(sm.status, 'published'),
+		       COALESCE(sm.lampiran, ''), sm.created_at, sm.updated_at
+		FROM kemenag_surat.surat_masuk sm
+		ORDER BY sm.tanggal_terima DESC, sm.created_at DESC
 		LIMIT $1 OFFSET $2
 	`, limit, offset)
 	if err != nil {
@@ -216,11 +216,11 @@ func CountSuratKeluarBulanIni(ctx context.Context) (int, error) {
 
 func ListSuratKeluar(ctx context.Context, limit, offset int) ([]models.SuratKeluar, error) {
 	rows, err := config.DB.Query(ctx, `
-		SELECT external_id, nomor_surat, tanggal_surat::text, tujuan_surat,
-		       perihal, COALESCE(agenda, ''), COALESCE(unit_kerja, ''), COALESCE(status, 'published'),
-		       COALESCE(lampiran, ''), created_at, updated_at
-		FROM kemenag_surat.surat_keluar
-		ORDER BY tanggal_surat DESC, created_at DESC
+		SELECT sk.external_id, sk.nomor_surat, sk.tanggal_surat::text, sk.tujuan_surat,
+		       sk.perihal, COALESCE(sk.agenda, ''), COALESCE(sk.unit_kerja, ''), COALESCE(sk.status, 'published'),
+		       COALESCE(sk.lampiran, ''), sk.created_at, sk.updated_at
+		FROM kemenag_surat.surat_keluar sk
+		ORDER BY sk.tanggal_surat DESC, sk.created_at DESC
 		LIMIT $1 OFFSET $2
 	`, limit, offset)
 	if err != nil {
