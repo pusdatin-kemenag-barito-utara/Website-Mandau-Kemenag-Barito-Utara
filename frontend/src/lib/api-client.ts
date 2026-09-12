@@ -1,6 +1,10 @@
 function getBaseUrl(): string {
   if (typeof window !== "undefined") {
-    return import.meta.env.PUBLIC_API_URL || "/api/v1";
+    return (
+      (window as unknown as { __PUBLIC_CONFIG__?: { PUBLIC_API_URL?: string } }).__PUBLIC_CONFIG__?.PUBLIC_API_URL ||
+      import.meta.env.PUBLIC_API_URL ||
+      "/api/v1"
+    );
   }
   const goApi = process.env.GO_API_URL || "http://127.0.0.1:8080";
   return `${goApi.replace(/\/+$/, "")}/api/v1`;

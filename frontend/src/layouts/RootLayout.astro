@@ -231,6 +231,16 @@ const jsonLd = {
         } catch (e) {}
       })();
     </script>
+    <!-- Runtime Public Configuration for Client Islands -->
+    <script is:inline define:vars={{
+      publicConfig: {
+        PUBLIC_TURNSTILE_SITE_KEY: process.env.PUBLIC_TURNSTILE_SITE_KEY || import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAADR1O_LSp1lgc3km",
+        PUBLIC_API_URL: process.env.PUBLIC_API_URL || import.meta.env.PUBLIC_API_URL || "/api/v1",
+        PUBLIC_PUSDATIN_URL: process.env.PUBLIC_PUSDATIN_URL || import.meta.env.PUBLIC_PUSDATIN_URL || "https://pusdatin.kemenag-baritoutara.com",
+      }
+    }}>
+      window.__PUBLIC_CONFIG__ = publicConfig;
+    </script>
     <!-- Google Tag Manager & Google Analytics 4 -->
     <GoogleAnalytics />
   </head>

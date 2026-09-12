@@ -15,6 +15,7 @@ interface LoginTurnstileProps {
   mounted: boolean;
   onTokenChange: (token: string | null) => void;
   label?: string;
+  siteKey?: string;
 }
 
 export interface LoginTurnstileRef {
@@ -22,7 +23,7 @@ export interface LoginTurnstileRef {
 }
 
 export const LoginTurnstile = forwardRef<LoginTurnstileRef, LoginTurnstileProps>(
-  ({ mounted, onTokenChange, label }, ref) => {
+  ({ mounted, onTokenChange, label, siteKey: siteKeyProp }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const widgetIdRef = useRef<string | null>(null);
     const [scriptLoaded, setScriptLoaded] = useState(false);
@@ -82,7 +83,12 @@ export const LoginTurnstile = forwardRef<LoginTurnstileRef, LoginTurnstileProps>
     useEffect(() => {
       if (!scriptLoaded || !containerRef.current || widgetIdRef.current) return;
 
-      const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+      const siteKey =
+        siteKeyProp ||
+        (typeof window !== "undefined" && (window as unknown as { __PUBLIC_CONFIG__?: { PUBLIC_TURNSTILE_SITE_KEY?: string } }).__PUBLIC_CONFIG__?.PUBLIC_TURNSTILE_SITE_KEY) ||
+        import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ||
+        "0x4AAAAAADR1O_LSp1lgc3km";
+
       if (!siteKey) {
         console.error("PUBLIC_TURNSTILE_SITE_KEY is not set");
         return;

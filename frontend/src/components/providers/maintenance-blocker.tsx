@@ -7,7 +7,11 @@ export function MaintenanceBlocker() {
     }
     return false;
   });
-  const pusdatinUrl = import.meta.env.PUBLIC_PUSDATIN_URL || "";
+  const pusdatinUrl =
+    (typeof window !== "undefined" &&
+      (window as unknown as { __PUBLIC_CONFIG__?: { PUBLIC_PUSDATIN_URL?: string } }).__PUBLIC_CONFIG__?.PUBLIC_PUSDATIN_URL) ||
+    import.meta.env.PUBLIC_PUSDATIN_URL ||
+    "https://pusdatin.kemenag-baritoutara.com";
   const appId = "e-surat-kemenag";
 
   useEffect(() => {

@@ -15,7 +15,11 @@ import { toast } from "@/lib/toast";
 import { m, AnimatePresence } from "framer-motion";
 import { FramerProvider } from "@/components/providers/framer-provider";
 
-export function LoginPage() {
+interface LoginPageProps {
+  turnstileSiteKey?: string;
+}
+
+export function LoginPage({ turnstileSiteKey }: LoginPageProps = {}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -340,6 +344,7 @@ export function LoginPage() {
                     ref={turnstileRef}
                     mounted={mounted}
                     onTokenChange={setTurnstileToken}
+                    siteKey={turnstileSiteKey}
                   />
                 </ErrorBoundary>
               </m.div>

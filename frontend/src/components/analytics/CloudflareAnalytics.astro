@@ -13,9 +13,14 @@ const {
 } = Astro.props;
 
 const isProduction = import.meta.env.PROD;
+const isValidToken = Boolean(
+  token &&
+    token.trim() !== "" &&
+    token !== "94dbf0388b2642e3b58e58ddc98c4132"
+);
 ---
 
-{token && isProduction && (
+{isValidToken && isProduction && (
   <script
     is:inline
     defer
