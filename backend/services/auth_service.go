@@ -101,7 +101,11 @@ func Login(ctx context.Context, email, password, turnstileToken, clientIP string
 		"is_super_admin": isSuper,
 		"exp":            time.Now().Add(7 * 24 * time.Hour).Unix(),
 	})
-	tokenString, err := token.SignedString(middleware.JWTSecret)
+	jwtSecret := middleware.GetJWTSecret()
+	if len(jwtSecret) == 0 {
+		return "", models.User{}, fmt.Errorf("JWT_SECRET environment variable is not configured")
+	}
+	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
 		return "", models.User{}, err
 	}

@@ -3,8 +3,6 @@ import { apiClient } from "@/lib/api-client";
 import { loginSchema } from "@/lib/validations/auth";
 import { LoginTurnstile, type LoginTurnstileRef } from "@/components/auth/_components/login-turnstile";
 import { ErrorBoundary } from "@/components/auth/error-boundary";
-import { LoginBgMotion } from "@/components/auth/login-card";
-import { ParticleCanvas } from "@/components/auth/particle-canvas";
 import {
   Loader2,
   Mail,
@@ -12,7 +10,6 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
-  Building2,
 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { m, AnimatePresence } from "framer-motion";
@@ -108,92 +105,82 @@ export function LoginPage() {
     <FramerProvider>
       <div className="relative w-full min-h-[100dvh] lg:h-[100dvh] lg:max-h-[100dvh] grid grid-cols-1 lg:grid-cols-12 overflow-x-hidden lg:overflow-hidden bg-white">
         
-        {/* SISI KIRI: Tampilan Pengenalan Aplikasi SI MANDAU (Dengan Bubbles & Partikel) */}
-        <div className="relative z-10 lg:col-span-7 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#f8fafc] via-[#e6fcf5] to-[#f8fafc] min-h-[480px] lg:h-full lg:min-h-0">
-          {/* Subtle particle canvas scoped ONLY to left panel */}
-          <ParticleCanvas />
+        {/* SISI KIRI: Tampilan Elegan & Terpusat SI MANDAU */}
+        <div className="relative z-10 lg:col-span-7 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/40 to-slate-100/80 min-h-[420px] lg:h-full lg:min-h-0 border-b lg:border-b-0 lg:border-r border-slate-200/80">
+          
+          {/* Subtle background decorative grid pattern & glowing orbs */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+            <div className="absolute inset-0 bg-[radial-gradient(#059669_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.07]" />
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] rounded-full bg-emerald-200/35 blur-[100px]" />
+            <div className="absolute bottom-10 left-1/3 w-72 h-72 rounded-full bg-teal-200/25 blur-[90px]" />
+          </div>
 
-          {/* Animated background blobs scoped ONLY to left panel */}
-          <LoginBgMotion />
-
-          <div className="relative z-10 flex flex-col justify-between h-full p-6 sm:p-10 lg:p-12 xl:p-16 overflow-y-auto">
-            {/* Top Badge */}
-            <div>
+          <div className="relative z-10 flex flex-col justify-between h-full p-8 sm:p-12 lg:p-16">
+            {/* Top Area: Badge Kemenag Elegan Terpusat */}
+            <div className="flex justify-center">
               <m.div
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-600/10 border border-emerald-600/20 text-emerald-800 text-xs font-semibold backdrop-blur-md"
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 border border-emerald-200/80 text-emerald-800 text-xs font-semibold shadow-xs backdrop-blur-md"
               >
-                <Building2 className="w-4 h-4 text-emerald-700" />
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span>Kantor Kementerian Agama Kabupaten Barito Utara</span>
               </m.div>
             </div>
 
-            {/* Center: Info Aplikasi */}
-            <div className="my-auto py-8 sm:py-10 max-w-xl">
+            {/* Center: Identitas Aplikasi Ditengah (Center Aligned) */}
+            <div className="my-auto py-8 flex flex-col items-center text-center max-w-md mx-auto">
+              {/* Logo Card dengan Ring & Shadow Berlapis */}
               <m.div
-                initial={{ opacity: 0, scale: 0.88 }}
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="relative w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 mb-6 drop-shadow-xl bg-white/90 rounded-3xl p-3 border border-emerald-100 shadow-xl shadow-emerald-900/5 backdrop-blur-md flex items-center justify-center ring-4 ring-emerald-500/10"
+                transition={{ duration: 0.5, type: "spring", stiffness: 200, damping: 20 }}
+                className="relative mb-6"
               >
-                <img
-                  src="/mandau.png"
-                  alt="Logo Resmi SI MANDAU Kemenag Barito Utara"
-                  width={112}
-                  height={112}
-                  loading="eager"
-                  fetchPriority="high"
-                  className="object-contain w-full h-full"
-                />
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white p-4 shadow-xl shadow-emerald-950/5 border border-emerald-100/90 flex items-center justify-center ring-8 ring-emerald-500/10 backdrop-blur-sm">
+                  <img
+                    src="/mandau.png"
+                    alt="Logo Resmi SI MANDAU"
+                    width={112}
+                    height={112}
+                    loading="eager"
+                    fetchPriority="high"
+                    className="object-contain w-full h-full drop-shadow-sm"
+                  />
+                </div>
               </m.div>
 
+              {/* Teks Judul & Subtitle */}
               <m.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
+                transition={{ duration: 0.4, delay: 0.15 }}
+                className="space-y-2 flex flex-col items-center"
               >
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-100/70 text-emerald-800 text-[11px] font-bold tracking-wider uppercase mb-3">
-                  Portal Resmi Persuratan & Agenda
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-tight">
+                <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 leading-tight">
                   SI MANDAU
                 </h1>
-                <p className="text-sm sm:text-base font-semibold text-emerald-700 mt-2 tracking-wide uppercase">
-                  Sistem Informasi Manajemen Agenda Naskah Dinas & Administrasi Umum
+                
+                <p className="text-base sm:text-lg font-bold text-emerald-800 tracking-normal">
+                  Sistem Tata Kelola Persuratan Digital
                 </p>
-                <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed mt-4 max-w-lg">
-                  Platform digital tata kelola persuratan dinas, registrasi penomoran naskah, disposisi elektronik, serta agenda pimpinan secara terintegrasi di lingkungan Kantor Kementerian Agama Kabupaten Barito Utara.
-                </p>
-              </m.div>
 
-              {/* Fitur Ringkas */}
-              <m.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
-                className="flex flex-wrap gap-2.5 mt-6"
-              >
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/80 border border-emerald-200/80 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  Registrasi & Penomoran Naskah
-                </div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/80 border border-emerald-200/80 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  Disposisi Surat Elektronik
-                </div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/80 border border-emerald-200/80 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  Agenda Pimpinan Terpadu
-                </div>
+                {/* Aksen Garis Halus */}
+                <div className="w-12 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full my-2" />
+
+                <p className="text-xs sm:text-sm text-slate-500 font-medium max-w-xs leading-relaxed">
+                  Layanan administrasi persuratan dinas dan agenda pimpinan terintegrasi.
+                </p>
               </m.div>
             </div>
 
-            {/* Footer Sisi Kiri */}
-            <div className="pt-6 border-t border-emerald-200/50 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 gap-2">
-              <span>&copy; {new Date().getFullYear()} Kantor Kementerian Agama Kabupaten Barito Utara</span>
-              <span className="font-semibold text-emerald-700">Versi 2.0</span>
+            {/* Footer Sisi Kiri Terpusat & Rapi */}
+            <div className="pt-6 border-t border-slate-200/70 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+              <span>&copy; {new Date().getFullYear()} Kemenag Barito Utara</span>
+              <span className="font-medium text-emerald-700/80 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200/50">
+                Versi 2.0
+              </span>
             </div>
           </div>
         </div>

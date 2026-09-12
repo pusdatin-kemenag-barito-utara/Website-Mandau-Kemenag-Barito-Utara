@@ -3,7 +3,8 @@
 ## Commands
 
 | Command | What |
-|---------|------|
+|---|---|
+| `npm run install:all` | Install semua dependensi root, frontend (npm), dan backend (`go mod download`) |
 | `npm run dev` | concurrently: Go backend (8080, hot-reload via Air) + Astro frontend (3000) |
 | `npm run dev:frontend` | Astro dev only (port 3000) |
 | `npm run dev:backend` | Go backend via Air (auto rebuild + restart on `.go` save) |

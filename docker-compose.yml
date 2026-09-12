@@ -8,10 +8,12 @@ services:
     ports:
       - "3000:3000"
       - "8080:8080"
-    env_file:
-      - .env.local
     environment:
-      - NODE_ENV=production
-      - GO_ENV=production
-      - GO_API_URL=http://127.0.0.1:8080
-      - PUBLIC_API_URL=/api/v1
+      - PORT=3000
+      - GO_PORT=8080
+      - INFISICAL_API_URL=${INFISICAL_API_URL:-https://app.infisical.com/api}
+      - INFISICAL_PROJECT_ID=${INFISICAL_PROJECT_ID}
+      - INFISICAL_CLIENT_ID=${INFISICAL_CLIENT_ID}
+      - INFISICAL_CLIENT_SECRET=${INFISICAL_CLIENT_SECRET}
+      - INFISICAL_ENV=${INFISICAL_ENV:-prod}
+      - INFISICAL_SECRET_PATH=${INFISICAL_SECRET_PATH:-/mandau-kemenag}

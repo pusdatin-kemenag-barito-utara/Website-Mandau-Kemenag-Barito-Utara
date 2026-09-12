@@ -10,14 +10,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var JWTSecret = []byte(getJWTSecret())
-
-func getJWTSecret() string {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "super-secret-mandau-kemenag-key-2026"
-	}
-	return secret
+func GetJWTSecret() []byte {
+	return []byte(os.Getenv("JWT_SECRET"))
 }
 
 func AuthRequired(c fiber.Ctx) error {
@@ -37,11 +31,19 @@ func AuthRequired(c fiber.Ctx) error {
 		})
 	}
 
+	secret := GetJWTSecret()
+	if len(secret) == 0 {
+		return c.Status(fiber.StatusInternalServerError).JSON(models.APIResponse{
+			Success: false,
+			Error:   "Konfigurasi autentikasi server belum terinisialisasi.",
+		})
+	}
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fiber.ErrUnauthorized
 		}
-		return JWTSecret, nil
+		return secret, nil
 	})
 
 	if err != nil || !token.Valid {

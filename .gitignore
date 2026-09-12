@@ -73,8 +73,7 @@ backend/vendor/
 # ── 4. Environment Variables & Secrets (Security Critical) ──
 .env
 .env.*
-!.env.example
-!.env.template
+.env*.local
 *.pem
 *.key
 *.crt
@@ -85,6 +84,10 @@ credentials.json
 service-account*.json
 ptsp-kemenag-drive*.json
 backend/ptsp-kemenag-drive*.json
+
+# Infisical local cache & user tokens (Keep .infisical.json tracked)
+.infisical/
+infisical.token
 
 # ── 5. TypeScript & Cache Outputs ──
 *.tsbuildinfo

@@ -25,14 +25,14 @@ func sanitizeFileName(name string) string {
 }
 
 // BuildLampiranPublicURL returns a browser-accessible URL for a lampiran key.
-// A custom-domain R2_PUBLIC_URL wins; otherwise a same-origin path is returned
-// that works through the frontend /api/v1 proxy in both dev and production.
+// If R2_PUBLIC_URL is configured (from Infisical), it builds the full public CDN URL;
+// otherwise it falls back to a same-origin relative proxy endpoint (/api/v1/lampiran/...).
 func BuildLampiranPublicURL(key string) string {
 	cleanKey := strings.TrimLeft(key, "/")
 	if config.R2PublicURL != "" && !strings.Contains(config.R2PublicURL, "r2.dev") {
 		return fmt.Sprintf("%s/%s", strings.TrimRight(config.R2PublicURL, "/"), cleanKey)
 	}
-	return fmt.Sprintf("https://files.kemenag-baritoutara.com/%s", cleanKey)
+	return fmt.Sprintf("/api/v1/lampiran/%s", cleanKey)
 }
 
 func UploadLampiran(ctx context.Context, fileHeader *multipart.FileHeader, prefix, suratID string) (string, error) {
@@ -86,20 +86,20 @@ func DeleteLampiran(ctx context.Context, rawURL string) error {
 	}
 
 	key := rawURL
-	if strings.Contains(rawURL, "files.kemenag-baritoutara.com/") {
-		parts := strings.Split(rawURL, "files.kemenag-baritoutara.com/")
+	if config.R2PublicURL != "" && strings.Contains(rawURL, config.R2PublicURL) {
+		parts := strings.Split(rawURL, strings.TrimRight(config.R2PublicURL, "/")+"/")
 		if len(parts) > 1 {
 			key = parts[1]
 		}
 	} else if strings.HasPrefix(rawURL, "/api/v1/lampiran/") {
 		key = strings.TrimPrefix(rawURL, "/api/v1/lampiran/")
-	} else if config.R2PublicURL != "" && strings.HasPrefix(rawURL, config.R2PublicURL) {
-		key = strings.TrimPrefix(rawURL, strings.TrimRight(config.R2PublicURL, "/")+"/")
-	} else if strings.Contains(rawURL, "/data-surat/") {
-		parts := strings.Split(rawURL, "/data-surat/")
+	} else if config.R2Bucket != "" && strings.Contains(rawURL, "/"+config.R2Bucket+"/") {
+		parts := strings.Split(rawURL, "/"+config.R2Bucket+"/")
 		if len(parts) > 1 {
 			key = parts[1]
 		}
+	} else if idx := strings.Index(rawURL, "lampiran-"); idx != -1 {
+		key = rawURL[idx:]
 	}
 
 	key = strings.TrimLeft(key, "/")
